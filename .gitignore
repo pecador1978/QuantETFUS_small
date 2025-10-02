@@ -1,36 +1,51 @@
-# Ignore raw + enriched data
+# =========================
+# QuantETFUS_small .gitignore
+# =========================
+
+# --- Data folders (live in QuantShared via iCloud, NOT GitHub) ---
 data_raw/
 data_enriched/
 merged_datasets/
+data_final_training/
 param_results/
 signals/
 boards/
 models/
 output/
 site/
-
-# Large training / data files
-data_final_training/
 _trash_*/
+
+# --- Large file types (never in GitHub) ---
 *.parquet
 *.csv
+*.pkl
+*.h5
+*.feather
+*.npz
+*.npy
 
-# Ignore Python cache
+# --- Python / runtime noise ---
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.ipynb_checkpoints/
+*.log
 
-# Ignore Jupyter notebooks checkpoints
+# --- Virtual environments ---
+venv/
+.env/
+.venv/
+
+# --- OS / editor noise ---
+.DS_Store
+*.swp
+*.swo
+*.bak
+
+# --- Jupyter checkpoints ---
 .ipynb_checkpoints/
 
-# Ignore macOS noise
-.DS_Store# Ignore config JSONs with secrets
-config/*.json
-
-# Ignore raw data
-data_raw/
-
-# Ignore virtual environment
-venv/
-
-# Ignore macOS noise
-.DS_Store
+# --- Optional: IDE/project files ---
+.vscode/
+.idea/
