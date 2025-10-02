@@ -166,8 +166,6 @@ if [[ -z "$LAST_RULE_CSV" ]]; then
 else
   say "s81 will render snapshot → $(basename "$LAST_RULE_CSV")"
   if [[ -f "$SCRIPTS/s81_decision_board_rules_v1_5.py" ]]; then
-    # s81 doesn’t accept --universe-xlsx; it resolves Excel internally.
-    # Give it the correct path via env so it won’t look in project/config.
     ETF_LIST_XLSX="${ETF_LIST_XLSX:-/Users/Finance/QuantShared/ETF_list.xlsx}" \
     "$PY" "$SCRIPTS/s81_decision_board_rules_v1_5.py" \
       --label "gate1_v1.5" \
@@ -184,5 +182,5 @@ say "Log → $LOGFILE"
 # Update "latest" symlink in signals/
 LATEST="/Users/Finance/QuantShared/signals/1_signals_dashboard_latest_gate1_v1.0.html"
 NEWEST=$(ls -t /Users/Finance/QuantShared/signals/signals_dashboard_gate1_v1.0_*.html | head -n1)
-ln -sf "$NEWEST" "$LATEST"
+ln -sfn "$NEWEST" "$LATEST"
 echo "[OK] Symlinked latest dashboard → $LATEST"

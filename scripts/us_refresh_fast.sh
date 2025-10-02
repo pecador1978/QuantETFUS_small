@@ -21,10 +21,10 @@ export ETF_SHEET="${ETF_SHEET:-signalsUSD}"
 export ETF_LIST_XLSX="${ETF_LIST_XLSX:-/Users/Finance/QuantShared/ETF_list.xlsx}"
 
 # How "fast" you want it:
-DAYS="${DAYS:-15}"           # recent daily/30m horizon
-WEEKS="${WEEKS:-4}"         # recent weekly horizon
-RUN_WEEKLY="${RUN_WEEKLY:-0}" # 0=skip weekly, 1=download weekly
-SLEEP_MS="${SLEEP_MS:-200}"   # IB pacing (lower is faster, but riskier)
+DAYS="${DAYS:-15}"             # recent daily/30m horizon
+WEEKS="${WEEKS:-4}"            # recent weekly horizon
+RUN_WEEKLY="${RUN_WEEKLY:-0}"  # 0=skip weekly, 1=download weekly
+SLEEP_MS="${SLEEP_MS:-200}"    # IB pacing (lower is faster, but riskier)
 
 # s81 label to print in the page header
 S81_LABEL="${S81_LABEL:-gate1_v1.0}"
@@ -72,7 +72,6 @@ run_any() {
 say "=== US REFRESH (FAST) START ==="
 
 # 1) IBKR downloads (recent only)
-# Your s10 shows --duration; we map DAYS -> "NN D"
 run_any "s10_ibkr_download_daily (fast)" \
   "$SCRIPTS/s10_ibkr_download_daily.py" "/Users/Finance/QuantShared/scripts/s10_ibkr_download_daily.py" -- \
   --client_id 88 --sheet "$ETF_SHEET" --excel "$ETF_LIST_XLSX" \
@@ -124,7 +123,7 @@ else
     exit 1
   fi
 
-  : "${S81_LABEL:=gate1_v1.0}"   # keep header consistent; change via env if you want
+  : "${S81_LABEL:=gate1_v1.0}"
   ETF_LIST_XLSX="${ETF_LIST_XLSX:-/Users/Finance/QuantShared/ETF_list.xlsx}" \
   "$PY" "$S81_FILE" \
     --label "$S81_LABEL" \
@@ -138,5 +137,5 @@ say "Log → $LOGFILE"
 # Update "latest" symlink in signals/
 LATEST="/Users/Finance/QuantShared/signals/1_signals_dashboard_latest_gate1_v1.0.html"
 NEWEST=$(ls -t /Users/Finance/QuantShared/signals/signals_dashboard_gate1_v1.0_*.html | head -n1)
-ln -sf "$NEWEST" "$LATEST"
+ln -sfn "$NEWEST" "$LATEST"
 echo "[OK] Symlinked latest dashboard → $LATEST"
