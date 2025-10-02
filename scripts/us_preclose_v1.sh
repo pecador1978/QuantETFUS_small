@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Force QuantShared root to iCloud path
+export QSHARED="/Users/Finance/QuantShared"
+export QUANTSHARED="/Users/Finance/QuantShared"
+
 # ===================== paths =====================
 ROOT="/Users/Finance/QuantETFUS_small"
 VENV="$ROOT/venv"
@@ -176,3 +180,9 @@ fi
 
 say "=== US-PRECLOSE REFRESH (v1) DONE ==="
 say "Log → $LOGFILE"
+
+# Update "latest" symlink in signals/
+LATEST="/Users/Finance/QuantShared/signals/1_signals_dashboard_latest_gate1_v1.0.html"
+NEWEST=$(ls -t /Users/Finance/QuantShared/signals/signals_dashboard_gate1_v1.0_*.html | head -n1)
+ln -sf "$NEWEST" "$LATEST"
+echo "[OK] Symlinked latest dashboard → $LATEST"

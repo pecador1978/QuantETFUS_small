@@ -1,7 +1,7 @@
 # QuantETFUS_small
 
 Lightweight repo with **scripts + configs** for the QuantETFUS workflow.  
-Data and heavy outputs are stored separately in **iCloud (QuantShared)**.
+All heavy **data & outputs** live separately in **iCloud (QuantShared)**.
 
 ---
 
@@ -38,29 +38,33 @@ Data and heavy outputs are stored separately in **iCloud (QuantShared)**.
 - System/editor noise (`.DS_Store`, `*.swp`, `*.bak`, `*.tmp`)  
 - Python cache (`__pycache__/`, `*.pyc`)  
 - IDE settings (`.vscode/`, `.idea/`)  
+- Backup configs (`*_backup.json`)  
 
 ---
 
-## 🔹 Workflow
+## 🔹 Daily Workflow
 
-1. **Code sync (GitHub)**
-   - Before editing: `git pull`
+1. **Code sync (GitHub)**  
+   - Before editing:  
+     ```bash
+     git pull
+     ```
    - After editing:  
      ```bash
      git add .
-     git commit -m "Message"
+     git commit -m "Describe change"
      git push
      ```
 
 2. **Data sync (iCloud)**  
-   - Auto-synced between Mini & MBP.  
-   - Repo assumes `QuantShared` path is consistent on both machines.
+   - Handled automatically by iCloud.  
+   - Scripts assume `QuantShared` path is consistent on all machines.
 
 ---
 
-## 🔹 Notes
-- Keep **JSON configs** in GitHub (except backups).  
-- Keep **all parquet/CSV data** in iCloud (not GitHub).  
-- `.gitignore` protects repo from large files.  
+## 🔹 Setup Guide for New Machine (e.g. MBP)
 
----
+1. **Install Git + Python**  
+   ```bash
+   git --version
+   python3 --version
