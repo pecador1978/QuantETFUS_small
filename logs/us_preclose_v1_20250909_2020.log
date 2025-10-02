@@ -1,3 +1,0 @@
-[2025-09-09 20:20:05 UTC] === US-PRECLOSE REFRESH (v1) START ===
-[2025-09-09 20:20:05 UTC] s10_ibkr_download_daily → s10_ibkr_download_daily.py --client-id 88
-[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily

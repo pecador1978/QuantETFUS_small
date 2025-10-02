@@ -2,7 +2,7 @@
 # QuantETFUS_small .gitignore
 # =========================
 
-# --- Data folders (live in QuantShared via iCloud, NOT GitHub) ---
+# --- Data folders (large, generated, handled via iCloud QuantShared) ---
 data_raw/
 data_enriched/
 merged_datasets/
@@ -15,9 +15,6 @@ output/
 site/
 _trash_*/
 
-# Ignore backup JSONs (keep main configs)
-*_backup.json
-
 # --- Large file types (never in GitHub) ---
 *.parquet
 *.csv
@@ -27,13 +24,20 @@ _trash_*/
 *.npz
 *.npy
 
+# --- Config backups / autosaves ---
+*_backup.json
+*.save
+*.bak
+*.tmp
+*.old
+
 # --- Python / runtime noise ---
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.ipynb_checkpoints/
 *.log
+.ipynb_checkpoints/
 
 # --- Virtual environments ---
 venv/
@@ -44,10 +48,6 @@ venv/
 .DS_Store
 *.swp
 *.swo
-*.bak
-
-# --- Jupyter checkpoints ---
-.ipynb_checkpoints/
 
 # --- Optional: IDE/project files ---
 .vscode/
