@@ -1,0 +1,33 @@
+{
+  "EMA": [5, 10, 20, 44, 50, 100, 200],
+  "SMA": [20, 50, 150],
+  "RSI": [14, 21],
+  "ADX": [14],
+  "ATR": [14],
+  "Bollinger": [
+    {"length": 20, "std": 2.0},
+    {"length": 50, "std": 2.5}
+  ],
+  "MACD": [
+    {"fast": 12, "slow": 26, "signal": 9}
+  ],
+
+  "Pullback": {
+    "ema": 20,
+    "trend_fast": 20,
+    "trend_mid": 44,
+    "trend_slow": 100,
+    "band_pct": 0.005,
+    "rsi_len": 14,
+    "rsi_ceiling": 68
+  },
+  "Stochastic": [
+    {"k": 14, "d": 3, "smooth": 3}
+  ],
+  "regime": {
+    "adx_trend_min": 20.0,
+    "adx_sideways_max": 15.0,
+    "ema_slope_flat_abs": 0.02,
+    "ema_slope_len": 44   
+  }
+}

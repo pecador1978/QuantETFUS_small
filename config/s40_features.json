@@ -1,0 +1,21 @@
+{
+  "universe_sheet": "signals",
+  "lag_features": {
+    "per_ticker": ["close", "ema5", "ema20", "ema44", "rsi14", "adx14"],
+    "global": []
+  },
+  "lags": [1, 3, 5, 10],
+  "rolling": [
+    {"col": "close", "window": 5, "func": ["mean", "std"]},
+    {"col": "close", "window": 20, "func": ["mean", "std"]},
+    {"col": "rsi14", "window": 5, "func": ["mean"]}
+  ],
+  "targets": {
+    "horizons": [5, 10],
+    "ret_type": "log",           
+    "class_thresholds": [0.02],  
+    "make_binary": true
+  },
+  "drop_na_after": true,          
+  "align_full_panel": true        
+}

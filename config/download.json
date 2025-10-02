@@ -1,0 +1,11 @@
+{
+  "project": "LSE_USD",
+  "base_currency": "USD",
+  "market_tz": "Europe/London",
+  "session_start": "08:00",
+  "session_end": "16:30",
+  "target_bucket": "targeted_ETFsUS",
+  "exchange_suffix": "LSE",
+  "tv_prefix": "LSE:",
+  "yahoo_suffix": ".L"
+}

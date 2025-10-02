@@ -1,0 +1,33 @@
+{
+  "model": "lgbm",                       
+  "label_threshold": 0.0,                
+  "decision_threshold": 0.60,
+  "feature_guard": {
+    "enabled": true,
+    "mode": "error",               
+    "extra_forbidden_exact": [],  
+    "extra_forbidden_fuzzy": [],   
+    "allowlist": []},             
+  "min_abs_corr": 0.0,                   
+  "drop_all_nan_cols": true,             
+
+  "cat_features": ["ticker"],            
+  "forbidden_features": [                
+    "ret_trade","pnl_eur","entry_px","exit_px",
+    "entry_dt","exit_dt","trade_id","num_fills","legs"
+  ],
+
+  "paths": {                             
+    "train": null,
+    "val":   null,
+    "test":  null
+  },
+
+  "encoder": {
+    "ohe_min_frequency": 5               
+  },
+
+  "live": {
+    "whitelist_file": "param_results/s70_whitelist.csv"
+  }
+}

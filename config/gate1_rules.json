@@ -1,0 +1,21 @@
+{
+  "use_ema_buffer": true,
+  "buffer_pct": 0.0015,
+
+  "enable_shorts": true,
+
+  "rsi_long_max": 60.0,
+  "rsi_short_min": 40.0,
+
+  "require_trend_alignment": true,
+  "ema20_gt_ema44_for_long": true,
+  "ema20_lt_ema44_for_short": true,
+
+  "ema5_slope_min": 0.001,
+  "ema20_slope_min": 0.0003,
+
+  "overrides": {
+    "URNM": { "ema5_slope_min": 0.001 },
+    "IUHC": { "ema20_slope_min": 0.00003 }
+  }
+}

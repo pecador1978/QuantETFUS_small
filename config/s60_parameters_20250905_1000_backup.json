@@ -1,0 +1,21 @@
+{
+    "t1_pct": [1.0, 2.0, 2.5, 3.0],
+    "t2_pct": [3.0, 4.0, 5.0, 8.0],
+  
+    "drop_exit_pct": [2.0],
+  
+    "rsi_entry_threshold": [65.0, 70.0, 75.0],
+    "entry_buffer_pct": [0.0],
+  
+    "ema5_slope_min": [0.0010],
+    "ema20_slope_min": [0.0003],
+    "momentum_breakout_enabled": [false],
+  
+    "cooldown_days": [0],
+  
+    "atr_length": [14],
+    "atr_mode": ["none"],
+  
+    "streak_mode": ["1of2", "prev1"],
+    "daily_mode": ["price_above_ema20", "loose"]
+  }

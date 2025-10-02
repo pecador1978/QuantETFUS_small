@@ -1,0 +1,85 @@
+{
+  "label": "gate1_v1.0",
+  "timeframe": "30m",
+
+  "ema_base_len": 340,
+
+  "confirm_days_long": 0,
+  "confirm_days_short": 2,
+  "allow_today_open_as_confirm": true,
+
+  "use_ema_buffer": true,
+  "buffer_pct": 0.001,
+
+  "enable_shorts": true,
+
+  "rsi_long_max": 70.0,
+  "rsi_short_min": 38.0,
+
+  "require_trend_alignment": true,
+  "price_gt_ema_base_for_long": true,
+  "price_lt_ema_base_for_short": true,
+  "ema20_gt_ema44_for_long": true,
+  "ema20_lt_ema44_for_short": true,
+
+  "ema20_min_gap_pct": 0.3,
+  "ema5_slope_min": -10.0,
+  "ema20_slope_min": 0.0003,
+  "ema_base_slope_min": 0.0,
+
+  "use_adx": true,
+  "adx_len": 14,
+  "adx_min_long": 14.0,
+  "adx_min_short": 14.0,
+  "adx_require_rising": false,
+  "adx_min_delta": 0.0,
+
+  "use_donchian": false,
+
+  "ignore_gap_pct": 2.0,
+
+  "liquidity_filter": { "min_aum_m": 3, "min_avg_dollar_vol_m": 0.1 },
+
+  "signals": [
+    {
+      "name": "trend_start_ema20",
+      "side": "LONG",
+      "when_all_true": ["trend_long_start_d"],
+      "cooldown_days": 30
+    },
+    {
+      "name": "trend_active_ema20",
+      "side": "LONG",
+      "when_all_true": ["above_ema20_streak_ge2_d"],
+      "when_all_false": ["below_ema20_d"]
+    },
+    {
+      "name": "ema20_pullback_entry",
+      "side": "LONG",
+      "when_all_true": ["pullback_entry_d"],
+      "when_all_false": ["below_ema20_d"]
+    }
+  ],
+
+  "overrides": {
+    "URNM": { "ema5_slope_min": 0.001 },
+    "IUHC": { "ema20_slope_min": 0.00003 },
+    "URNJ": { "adx_min_long": 20.0 },
+    "ISUN": { "donchian_avoid_long_if_pos_gt": 0.1 }
+  },
+
+  "confidence": {
+    "label_thresholds": { "low": 60, "high": 80 },
+    "weights": {
+      "core_price_vs_base": 20,
+      "core_20v44_trend": 20,
+      "core_confirm_days": 15,
+      "core_buffer_respected": 5,
+      "rsi": 10,
+      "slopes_pack": 15,
+      "adx": 10,
+      "donchian": 5
+    },
+    "rsi": { "long_cap": 70, "long_soft": 75, "short_floor": 40, "short_soft": 35 }
+  }
+}
