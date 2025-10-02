@@ -1,0 +1,150 @@
+[2025-09-24 08:40:49 UTC] === US-PRECLOSE REFRESH (v1) START ===
+[2025-09-24 08:40:49 UTC] ticker_mapping.csv present → /Users/Finance/QuantETFUS_small/config/ticker_mapping.csv
+[2025-09-24 08:40:49 UTC] s06_full_30min_historical → s06_full_30min_historical.py --client_id 57 --years 10
+[IB] Connecting 127.0.0.1:7496 (clientId=57) …
+[IB] Connected.
+[1/36] BATT: exists → SKIP
+[2/36] COPX: exists → SKIP
+[3/36] DGTL: exists → SKIP
+[4/36] GDX: exists → SKIP
+[5/36] GDXJ: exists → SKIP
+[6/36] IOGP: exists → SKIP
+[7/36] ISAC: exists → SKIP
+[8/36] ISUN: exists → SKIP
+[9/36] IUCM: exists → SKIP
+[10/36] IUCS: exists → SKIP
+[11/36] IUES: exists → SKIP
+[12/36] IUFS: exists → SKIP
+[13/36] IUHC: exists → SKIP
+[14/36] IUIT: exists → SKIP
+[15/36] IUUS: exists → SKIP
+[16/36] IWDA: exists → SKIP
+[17/36] PHAG: exists → SKIP
+[18/36] RBOT: exists → SKIP
+[19/36] RENW: exists → SKIP
+[20/36] SBIO: exists → SKIP
+[21/36] SMH: exists → SKIP
+[22/36] SGLD: exists → SKIP
+[23/36] SILV: exists → SKIP
+[24/36] URNJ: exists → SKIP
+[25/36] URNM: exists → SKIP
+[26/36] USPY: exists → SKIP
+[27/36] XNAS: exists → SKIP
+[28/36] XS2D: exists → SKIP
+[29/36] XSPD: exists → SKIP
+[30/36] XT2D: exists → SKIP
+[31/36] VUAA: exists → SKIP
+[32/36] AIGA: exists → SKIP
+[33/36] AIAI: exists → SKIP
+[34/36] XMED: exists → SKIP
+[35/36] ICOM: exists → SKIP
+[36/36] R2US: exists → SKIP
+[DONE] Scanned 36 | Newly seeded 0 | Dir → /Users/Finance/QuantShared/data_raw_ETF_US/30min
+[2025-09-24 08:40:50 UTC] s07_full_weekly_historical → s07_full_weekly_historical.py --client_id 58 --years 10
+[IB] Connecting 127.0.0.1:7496 (clientId=58) …
+[IB] Connected.
+[1/36] BATT: exists → SKIP
+[2/36] COPX: exists → SKIP
+[3/36] DGTL: exists → SKIP
+[4/36] GDX: exists → SKIP
+[5/36] GDXJ: exists → SKIP
+[6/36] IOGP: exists → SKIP
+[7/36] ISAC: exists → SKIP
+[8/36] ISUN: exists → SKIP
+[9/36] IUCM: exists → SKIP
+[10/36] IUCS: exists → SKIP
+[11/36] IUES: exists → SKIP
+[12/36] IUFS: exists → SKIP
+[13/36] IUHC: exists → SKIP
+[14/36] IUIT: exists → SKIP
+[15/36] IUUS: exists → SKIP
+[16/36] IWDA: exists → SKIP
+[17/36] PHAG: exists → SKIP
+[18/36] RBOT: exists → SKIP
+[19/36] RENW: exists → SKIP
+[20/36] SBIO: exists → SKIP
+[21/36] SMH: exists → SKIP
+[22/36] SGLD: exists → SKIP
+[23/36] SILV: exists → SKIP
+[24/36] URNJ: exists → SKIP
+[25/36] URNM: exists → SKIP
+[26/36] USPY: exists → SKIP
+[27/36] XNAS: exists → SKIP
+[28/36] XS2D: exists → SKIP
+[29/36] XSPD: exists → SKIP
+[30/36] XT2D: exists → SKIP
+[31/36] VUAA: exists → SKIP
+[32/36] AIGA: exists → SKIP
+[33/36] AIAI: exists → SKIP
+[34/36] XMED: exists → SKIP
+[35/36] ICOM: exists → SKIP
+[36/36] R2US: exists → SKIP
+[DONE] Frame=weekly | Scanned 36 | Newly seeded 0 | Dir → /Users/Finance/QuantShared/data_raw_ETF_US/weekly
+[2025-09-24 08:40:51 UTC] s30_enrich_to_parquet (post-seed) → s30_enrich_to_parquet.py
+Running: /Users/Finance/QuantETFUS_small/venv/bin/python /Users/Finance/QuantETFUS_small/scripts/s00_data_integrity_enrichment.py --input /Users/Finance/QuantETFUS_small/data_raw/etf_prices_daily_master.csv --freq D --tz Europe/London --outbase /Users/Finance/QuantETFUS_small
+
+Processing tickers:   0%|          | 0/36 [00:00<?, ?ticker/s]
+Processing tickers:  22%|██▏       | 8/36 [00:00<00:00, 71.51ticker/s]
+Processing tickers:  44%|████▍     | 16/36 [00:00<00:00, 72.04ticker/s]
+Processing tickers:  67%|██████▋   | 24/36 [00:00<00:00, 72.05ticker/s]
+Processing tickers:  92%|█████████▏| 33/36 [00:00<00:00, 77.42ticker/s]
+Processing tickers: 100%|██████████| 36/36 [00:00<00:00, 74.65ticker/s]
+[OK] Clean     → /Users/Finance/QuantETFUS_small/data_clean/prices_clean.parquet  | rows=77,184
+[OK] Enriched  → /Users/Finance/QuantETFUS_small/data_enriched/prices_enriched.parquet    | rows=77,184
+[OK] Report    → /Users/Finance/QuantETFUS_small/reports/integrity_report_20250924_0840.csv
+[DEBUG] enriched_final shape=(77184, 38) cols=38
+[OK] Enrichment complete. Parquets updated in: /Users/Finance/QuantETFUS_small
+[2025-09-24 08:40:52 UTC] s10_ibkr_download_daily → s10_ibkr_download_daily.py --client_id 88
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[IB] Connecting 127.0.0.1:7496 (clientId=88) …
+[IB] Connected.
+[1/36] BATT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/BATT_daily_raw.csv
+[2/36] COPX: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/COPX_daily_raw.csv
+[3/36] DGTL: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/DGTL_daily_raw.csv
+[4/36] GDX: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDX_daily_raw.csv
+[5/36] GDXJ: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDXJ_daily_raw.csv
+[6/36] IOGP: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IOGP_daily_raw.csv
+[7/36] ISAC: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ISAC_daily_raw.csv
+[8/36] IUCM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCM_daily_raw.csv
+[9/36] IUCS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCS_daily_raw.csv
+[10/36] IUES: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUES_daily_raw.csv
+[11/36] IUFS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUFS_daily_raw.csv
+[12/36] IUHC: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUHC_daily_raw.csv
+[13/36] IUIT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUIT_daily_raw.csv
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 158, in main
+    df = fetch_daily_df(ib, qualified[0], args.duration, args.what, bool(args.use_rth))
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 80, in fetch_daily_df
+    bars = ib.reqHistoricalData(
+        contract,
+    ...<6 lines>...
+        keepUpToDate=False,
+    )
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1070, in reqHistoricalData
+    return self._run(
+           ~~~~~~~~~^
+        self.reqHistoricalDataAsync(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            contract, endDateTime, durationStr, barSizeSetting, whatToShow,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            useRTH, formatDate, keepUpToDate, chartOptions, timeout))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 707, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 678, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1995, in _run_once
+    event_list = self._selector.select(timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 548, in select
+    kev_list = self._selector.control(None, max_ev, timeout)
+KeyboardInterrupt

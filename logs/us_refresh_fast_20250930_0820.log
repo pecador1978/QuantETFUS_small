@@ -1,0 +1,41 @@
+[2025-09-30 08:20:28 UTC] === US REFRESH (FAST) START ===
+[2025-09-30 08:20:28 UTC] s10_ibkr_download_daily (fast) → s10_ibkr_download_daily.py --client_id 88 --sheet signalsUSD --excel /Users/Finance/QuantShared/ETF_list.xlsx --duration 15 D --sleep_ms 200
+account updates for U12796496 request timed out
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[IB] Connecting 127.0.0.1:7496 (clientId=88) …
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 283, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 245, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1782, in connectAsync
+    await asyncio.wait_for(self.reqExecutionsAsync(), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError

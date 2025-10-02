@@ -1,0 +1,133 @@
+[2025-09-30 12:29:30 UTC] === US REFRESH (FAST) START ===
+[2025-09-30 12:29:30 UTC] s10_ibkr_download_daily (fast) → s10_ibkr_download_daily.py --client_id 88 --sheet signalsUSD --excel /Users/Finance/QuantShared/ETF_list.xlsx --duration 15 D --sleep_ms 200
+Error 200, reqId 8: No security definition has been found for the request, contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Error 200, reqId 15: No security definition has been found for the request, contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[IB] Connecting 127.0.0.1:7496 (clientId=88) …
+[IB] Connected.
+[1/43] AIAI: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIAI_daily_raw.csv
+[2/43] AIGA: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIGA_daily_raw.csv
+[3/43] AIGI: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIGI_daily_raw.csv
+[4/43] BATT: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/BATT_daily_raw.csv
+[5/43] COMF: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/COMF_daily_raw.csv
+[6/43] COPA: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/COPA_daily_raw.csv
+[7/43] COPX: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/COPX_daily_raw.csv
+[8/43] CSPX: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/CSPX_daily_raw.csv
+[9/43] DGTL: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/DGTL_daily_raw.csv
+[10/43] DTLA: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/DTLA_daily_raw.csv
+[11/43] GDX: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDX_daily_raw.csv
+[12/43] GDXJ: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDXJ_daily_raw.csv
+[13/43] IBTA: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IBTA_daily_raw.csv
+[14/43] ICOM: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ICOM_daily_raw.csv
+[15/43] IDTM: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IDTM_daily_raw.csv
+[16/43] IOGP: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IOGP_daily_raw.csv
+[17/43] ISAC: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ISAC_daily_raw.csv
+[18/43] IUCM: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCM_daily_raw.csv
+[19/43] IUCS: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCS_daily_raw.csv
+[20/43] IUES: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUES_daily_raw.csv
+[21/43] IUFS: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUFS_daily_raw.csv
+[22/43] IUHC: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUHC_daily_raw.csv
+[23/43] IUIT: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUIT_daily_raw.csv
+[24/43] IUUS: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUUS_daily_raw.csv
+[25/43] IWDA: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IWDA_daily_raw.csv
+[26/43] NUCL: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/NUCL_daily_raw.csv
+[27/43] PHAG: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/PHAG_daily_raw.csv
+[28/43] R2US: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/R2US_daily_raw.csv
+[29/43] RBOT: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/RBOT_daily_raw.csv
+[30/43] RENW: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/RENW_daily_raw.csv
+[31/43] SBIO: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SBIO_daily_raw.csv
+[32/43] SGLD: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SGLD_daily_raw.csv
+[33/43] SILV: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SILV_daily_raw.csv
+[34/43] SMH: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SMH_daily_raw.csv
+[35/43] URNJ: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/URNJ_daily_raw.csv
+[36/43] URNM: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/URNM_daily_raw.csv
+[37/43] USPY: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/USPY_daily_raw.csv
+[38/43] VUAA: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/VUAA_daily_raw.csv
+[39/43] XMED: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XMED_daily_raw.csv
+[40/43] XNAS: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XNAS_daily_raw.csv
+[41/43] XS2D: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XS2D_daily_raw.csv
+[42/43] XSPD: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XSPD_daily_raw.csv
+[43/43] XT2D: +1 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XT2D_daily_raw.csv
+[DONE] s10_ibkr_download_daily (append-only, UTC) complete.
+[2025-09-30 12:30:00 UTC] [INFO] Skipping weekly (RUN_WEEKLY=0)
+[2025-09-30 12:30:00 UTC] s11_ibkr_download_30min (fast) → s11_ibkr_download_30min.py --client_id 88 --sheet signalsUSD --excel /Users/Finance/QuantShared/ETF_list.xlsx --duration 15 D --sleep_ms 200
+Error 200, reqId 8: No security definition has been found for the request, contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Error 200, reqId 15: No security definition has been found for the request, contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | outdir=/Users/Finance/QuantShared/data_raw_ETF_US/30min
+[IB] Connecting 127.0.0.1:7496 (clientId=88) …
+[IB] Connected.
+[1/43] AIAI: +11 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/AIAI_30min_raw.csv
+[2/43] AIGA: +5 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/AIGA_30min_raw.csv
+[3/43] AIGI: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/AIGI_30min_raw.csv
+[4/43] BATT: +11 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/BATT_30min_raw.csv
+[5/43] COMF: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/COMF_30min_raw.csv
+[6/43] COPA: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/COPA_30min_raw.csv
+[7/43] COPX: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/COPX_30min_raw.csv
+[8/43] CSPX: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/CSPX_30min_raw.csv
+[9/43] DGTL: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/DGTL_30min_raw.csv
+[10/43] DTLA: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/DTLA_30min_raw.csv
+[11/43] GDX: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/GDX_30min_raw.csv
+[12/43] GDXJ: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/GDXJ_30min_raw.csv
+[13/43] IBTA: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IBTA_30min_raw.csv
+[14/43] ICOM: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/ICOM_30min_raw.csv
+[15/43] IDTM: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IDTM_30min_raw.csv
+[16/43] IOGP: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IOGP_30min_raw.csv
+[IB 2108] Market data farm connection is inactive but should be available upon demand.usfarm.nj
+[IB 2108] Market data farm connection is inactive but should be available upon demand.usfarm.nj
+[17/43] ISAC: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/ISAC_30min_raw.csv
+[18/43] IUCM: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUCM_30min_raw.csv
+[19/43] IUCS: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUCS_30min_raw.csv
+[20/43] IUES: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUES_30min_raw.csv
+[21/43] IUFS: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUFS_30min_raw.csv
+[22/43] IUHC: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUHC_30min_raw.csv
+[23/43] IUIT: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUIT_30min_raw.csv
+[24/43] IUUS: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IUUS_30min_raw.csv
+[25/43] IWDA: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/IWDA_30min_raw.csv
+[26/43] NUCL: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/NUCL_30min_raw.csv
+[27/43] PHAG: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/PHAG_30min_raw.csv
+[28/43] R2US: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/R2US_30min_raw.csv
+[29/43] RBOT: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/RBOT_30min_raw.csv
+[30/43] RENW: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/RENW_30min_raw.csv
+[31/43] SBIO: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/SBIO_30min_raw.csv
+[32/43] SGLD: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/SGLD_30min_raw.csv
+[33/43] SILV: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/SILV_30min_raw.csv
+[34/43] SMH: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/SMH_30min_raw.csv
+[35/43] URNJ: +7 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/URNJ_30min_raw.csv
+[36/43] URNM: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/URNM_30min_raw.csv
+[37/43] USPY: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/USPY_30min_raw.csv
+[38/43] VUAA: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/VUAA_30min_raw.csv
+[39/43] XMED: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/XMED_30min_raw.csv
+[40/43] XNAS: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/XNAS_30min_raw.csv
+[41/43] XS2D: +11 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/XS2D_30min_raw.csv
+[42/43] XSPD: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/XSPD_30min_raw.csv
+[43/43] XT2D: +12 rows → /Users/Finance/QuantShared/data_raw_ETF_US/30min/XT2D_30min_raw.csv
+[DONE] s11_ibkr_download_30min (append-only, UTC) complete.
+[s20] ROOT=/Users/Finance/QuantETFUS_small
+[s20] DATA_RAW(project)=/Users/Finance/QuantETFUS_small/data_raw
+[s20] SHARED_BASE=/Users/Finance/QuantShared/data_raw_ETF_US
+[s20] TT daily dir (read)=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[s20] ETF list=/Users/Finance/QuantShared/ETF_list.xlsx (sheet=signalsUSD)
+[OK] Wrote /Users/Finance/QuantETFUS_small/data_raw/etf_prices_daily_master.csv | rows=94,621 | tickers=43
+Running: /Users/Finance/QuantETFUS_small/venv/bin/python /Users/Finance/QuantETFUS_small/scripts/s00_data_integrity_enrichment.py --input /Users/Finance/QuantETFUS_small/data_raw/etf_prices_daily_master.csv --freq D --tz Europe/London --outbase /Users/Finance/QuantETFUS_small
+
+Processing tickers:   0%|          | 0/43 [00:00<?, ?ticker/s]
+Processing tickers:   0%|          | 0/43 [00:00<?, ?ticker/s]
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s00_data_integrity_enrichment.py", line 428, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s00_data_integrity_enrichment.py", line 246, in main
+    exp_idx    = expected_index_for_freq(g, args.freq, args.tz, args.rth or None)
+  File "/Users/Finance/QuantETFUS_small/scripts/s00_data_integrity_enrichment.py", line 167, in expected_index_for_freq
+    idx = pd.DatetimeIndex(sorted(dts.normalize().unique()))
+                                  ^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/pandas/core/generic.py", line 6318, in __getattr__
+    return object.__getattribute__(self, name)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AttributeError: 'Series' object has no attribute 'normalize'
+[ERR] s00_data_integrity_enrichment exited with code 1
+[2025-09-30 12:31:35 UTC] [ERR] /Users/Finance/QuantETFUS_small/scripts/us_refresh_fast.sh failed at line 94

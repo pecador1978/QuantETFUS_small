@@ -1,0 +1,454 @@
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+usage: s10_ibkr_download_daily.py [-h] [--host HOST] [--port PORT]
+                                  [--client_id CLIENT_ID]
+                                  [--duration DURATION] [--what WHAT]
+                                  [--use_rth USE_RTH] [--excel EXCEL]
+                                  [--sheet SHEET] [--ticker_col TICKER_COL]
+                                  [--mapping MAPPING] [--outdir OUTDIR]
+                                  [--sleep_ms SLEEP_MS] [--limit LIMIT]
+s10_ibkr_download_daily.py: error: unrecognized arguments: --client-id 88
+usage: s10_ibkr_download_daily.py [-h] [--host HOST] [--port PORT]
+                                  [--client_id CLIENT_ID]
+                                  [--duration DURATION] [--what WHAT]
+                                  [--use_rth USE_RTH] [--excel EXCEL]
+                                  [--sheet SHEET] [--ticker_col TICKER_COL]
+                                  [--mapping MAPPING] [--outdir OUTDIR]
+                                  [--sleep_ms SLEEP_MS] [--limit LIMIT]
+s10_ibkr_download_daily.py: error: unrecognized arguments: --client-id 88
+account updates for U12796496 request timed out
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1782, in connectAsync
+    await asyncio.wait_for(self.reqExecutionsAsync(), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+account updates for U12796496 request timed out
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1782, in connectAsync
+    await asyncio.wait_for(self.reqExecutionsAsync(), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+account updates for U12796496 request timed out
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1782, in connectAsync
+    await asyncio.wait_for(self.reqExecutionsAsync(), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+Peer closed connection.
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1776, in connectAsync
+    resps = await asyncio.gather(*tasks, return_exceptions=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 343, in run
+    raise globalErrorEvent.value() or e
+ConnectionError: Socket disconnect
+account updates for U12796496 request timed out
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1782, in connectAsync
+    await asyncio.wait_for(self.reqExecutionsAsync(), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError

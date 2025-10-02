@@ -1,0 +1,148 @@
+[2025-09-25 12:27:25 UTC] === US REFRESH (FAST) START ===
+[2025-09-25 12:27:25 UTC] s10_ibkr_download_daily (fast) → s10_ibkr_download_daily.py --client_id 88 --sheet signalsUSD --excel /Users/Finance/QuantShared/ETF_list.xlsx --recent-days 15
+usage: s10_ibkr_download_daily.py [-h] [--host HOST] [--port PORT]
+                                  [--client_id CLIENT_ID]
+                                  [--duration DURATION] [--what WHAT]
+                                  [--use_rth USE_RTH] [--excel EXCEL]
+                                  [--sheet SHEET] [--ticker_col TICKER_COL]
+                                  [--mapping MAPPING] [--outdir OUTDIR]
+                                  [--sleep_ms SLEEP_MS] [--limit LIMIT]
+s10_ibkr_download_daily.py: error: unrecognized arguments: --recent-days 15
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[2025-09-25 12:27:25 UTC] s10_ibkr_download_daily (fast) failed / unsupported args → retrying full
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[IB] Connecting 127.0.0.1:7496 (clientId=60) …
+[IB] Connected.
+[1/40] AIAI: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIAI_daily_raw.csv
+[2/40] AIGA: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIGA_daily_raw.csv
+[3/40] BATT: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/BATT_daily_raw.csv
+[4/40] COPX: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/COPX_daily_raw.csv
+[5/40] CSPX: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/CSPX_daily_raw.csv
+[6/40] DGTL: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/DGTL_daily_raw.csv
+[7/40] DTLA: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/DTLA_daily_raw.csv
+[8/40] GDX: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDX_daily_raw.csv
+[9/40] GDXJ: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDXJ_daily_raw.csv
+[10/40] IBTA: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IBTA_daily_raw.csv
+[11/40] ICOM: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ICOM_daily_raw.csv
+[12/40] IDTM: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IDTM_daily_raw.csv
+[13/40] IOGP: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IOGP_daily_raw.csv
+[14/40] ISAC: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ISAC_daily_raw.csv
+[15/40] IUCM: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCM_daily_raw.csv
+[16/40] IUCS: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCS_daily_raw.csv
+[17/40] IUES: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUES_daily_raw.csv
+[18/40] IUFS: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUFS_daily_raw.csv
+[19/40] IUHC: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUHC_daily_raw.csv
+[20/40] IUIT: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUIT_daily_raw.csv
+[21/40] IUUS: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUUS_daily_raw.csv
+[22/40] IWDA: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IWDA_daily_raw.csv
+[23/40] NUCL: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/NUCL_daily_raw.csv
+[24/40] PHAG: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/PHAG_daily_raw.csv
+[25/40] R2US: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/R2US_daily_raw.csv
+[26/40] RBOT: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/RBOT_daily_raw.csv
+[27/40] RENW: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/RENW_daily_raw.csv
+[28/40] SBIO: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SBIO_daily_raw.csv
+[29/40] SGLD: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SGLD_daily_raw.csv
+[30/40] SILV: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SILV_daily_raw.csv
+[31/40] SMH: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SMH_daily_raw.csv
+[32/40] URNJ: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/URNJ_daily_raw.csv
+[33/40] URNM: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/URNM_daily_raw.csv
+[34/40] USPY: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/USPY_daily_raw.csv
+[35/40] VUAA: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/VUAA_daily_raw.csv
+[36/40] XMED: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XMED_daily_raw.csv
+[37/40] XNAS: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XNAS_daily_raw.csv
+[38/40] XS2D: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XS2D_daily_raw.csv
+[39/40] XSPD: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XSPD_daily_raw.csv
+[40/40] XT2D: +0 → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XT2D_daily_raw.csv
+[DONE] s10_ibkr_download_daily (append-only, UTC) complete.
+[2025-09-25 12:30:32 UTC] [SKIP] s12 weekly (not Friday, FORCE_WEEKLY=0)
+[2025-09-25 12:30:32 UTC] s13_market_trends_update → s13_market_trends_update.py
+[INFO] Using list: /Users/Finance/QuantShared/ETF_list.xlsx | sheet=market_trends | tickers=66
+[IB] Connecting 127.0.0.1:7496 (clientId=63) …
+[IB] Connected.
+CEW_DXY_ratio_TV_daily.csv: skip (ratio/composite)
+CEW [STK/TRADES]: +0 rows → CEW_TV_daily.csv
+DBC_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+DBC_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+DBC [STK/TRADES]: +0 rows → DBC_TV_daily.csv
+DIA_QQQ_ratio_TV_daily.csv: skip (ratio/composite)
+DIA [STK/TRADES]: +0 rows → DIA_TV_daily.csv
+DXY_TV_daily.csv: skip (ticker not in ETF_list.xlsx → market_trends)
+EEM_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+EEM [STK/TRADES]: +0 rows → EEM_TV_daily.csv
+EFA_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+EFA [STK/TRADES]: +0 rows → EFA_TV_daily.csv
+FEZ_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+FEZ [STK/TRADES]: +0 rows → FEZ_TV_daily.csv
+GDX [STK/TRADES]: +0 rows → GDX_TV_daily.csv
+GLD_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+GLD_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+GLD [STK/TRADES]: +0 rows → GLD_TV_daily.csv
+HYG_IEI_ratio_TV_daily.csv: skip (ratio/composite)
+HYG_LQD_ratio_TV_daily.csv: skip (ratio/composite)
+HYG_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+HYG [STK/TRADES]: +0 rows → HYG_TV_daily.csv
+IEI [STK/TRADES]: +0 rows → IEI_TV_daily.csv
+IWC [STK/TRADES]: +0 rows → IWC_TV_daily.csv
+IWM [STK/TRADES]: +0 rows → IWM_TV_daily.csv
+JNK_LQD_ratio_TV_daily.csv: skip (ratio/composite)
+JNK [STK/TRADES]: +0 rows → JNK_TV_daily.csv
+KRE [STK/TRADES]: +0 rows → KRE_TV_daily.csv
+LQD_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+LQD [STK/TRADES]: +0 rows → LQD_TV_daily.csv
+PC_TV_daily.csv: skip (ticker not in ETF_list.xlsx → market_trends)
+QQQ_IWM_ratio_TV_daily.csv: skip (ratio/composite)
+QQQ_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+QQQ_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+QQQ [STK/TRADES]: +0 rows → QQQ_TV_daily.csv
+RSP_QQQ_ratio_TV_daily.csv: skip (ratio/composite)
+RSP_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+RSP [STK/TRADES]: +0 rows → RSP_TV_daily.csv
+SLV [STK/TRADES]: +0 rows → SLV_TV_daily.csv
+SPHB_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+SPHB [STK/TRADES]: +0 rows → SPHB_TV_daily.csv
+SPYD [STK/TRADES]: +0 rows → SPYD_TV_daily.csv
+SPY_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+SPY [STK/TRADES]: +0 rows → SPY_TV_daily.csv
+TLT [STK/TRADES]: +0 rows → TLT_TV_daily.csv
+VIX3M [IND/TRADES]: +0 rows → VIX3M_TV_daily.csv
+VIX9D [IND/TRADES]: +0 rows → VIX9D_TV_daily.csv
+VIX [IND/TRADES]: +0 rows → VIX_TV_daily.csv
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s13_market_trends_update.py", line 444, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s13_market_trends_update.py", line 428, in main
+    msg = update_one(str(path), ib, mapping, args.duration, args.what, bool(args.use_rth))
+  File "/Users/Finance/QuantETFUS_small/scripts/s13_market_trends_update.py", line 227, in update_one
+    df_new = fetch_daily_df(ib, qc, duration, what_to_show, use_rth)
+  File "/Users/Finance/QuantETFUS_small/scripts/s13_market_trends_update.py", line 179, in fetch_daily_df
+    bars = ib.reqHistoricalData(
+        contract,
+    ...<6 lines>...
+        keepUpToDate=False,
+    )
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1070, in reqHistoricalData
+    return self._run(
+           ~~~~~~~~~^
+        self.reqHistoricalDataAsync(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            contract, endDateTime, durationStr, barSizeSetting, whatToShow,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            useRTH, formatDate, keepUpToDate, chartOptions, timeout))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 707, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 678, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1995, in _run_once
+    event_list = self._selector.select(timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/selectors.py", line 548, in select
+    kev_list = self._selector.control(None, max_ev, timeout)
+KeyboardInterrupt

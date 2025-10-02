@@ -1,0 +1,36 @@
+# Ignore raw + enriched data
+data_raw/
+data_enriched/
+merged_datasets/
+param_results/
+signals/
+boards/
+models/
+output/
+site/
+
+# Large training / data files
+data_final_training/
+_trash_*/
+*.parquet
+*.csv
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Ignore macOS noise
+.DS_Store# Ignore config JSONs with secrets
+config/*.json
+
+# Ignore raw data
+data_raw/
+
+# Ignore virtual environment
+venv/
+
+# Ignore macOS noise
+.DS_Store

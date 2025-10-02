@@ -1,0 +1,973 @@
+/bin/bash: /Users/Finance/QuantETFUS_small/scripts/run_us_open_v1.sh: No such file or directory
+/Users/Finance/QuantETFUS_small/scripts/us_open_v1.sh: No such file or directory
+Error 326, reqId -1: Unable to connect as the client id is already in use. Retry with a unique client id.
+Peer closed connection. clientId 60 already in use?
+API connection failed: TimeoutError()
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 217, in connectAsync
+    await asyncio.wait_for(self.apiStart, timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+usage: s10_ibkr_download_daily.py [-h] [--host HOST] [--port PORT]
+                                  [--client_id CLIENT_ID]
+                                  [--duration DURATION] [--what WHAT]
+                                  [--use_rth USE_RTH] [--excel EXCEL]
+                                  [--sheet SHEET] [--ticker_col TICKER_COL]
+                                  [--mapping MAPPING] [--outdir OUTDIR]
+                                  [--sleep_ms SLEEP_MS] [--limit LIMIT]
+s10_ibkr_download_daily.py: error: unrecognized arguments: --client-id 87
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 174, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 147, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Error 200, reqId 56: No security definition has been found for the request, contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='CSPX', exchange='SMART', currency='USD')
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+Error 1100, reqId -1: Connectivity between IBKR and Trader Workstation has been lost.
+Error 200, reqId 40: No security definition has been found for the request, contract: Contract(secType='STK', symbol='IUHC', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='IUHC', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 41: No security definition has been found for the request, contract: Stock(symbol='IUHC', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IUHC', exchange='LSEETF', currency='USD')
+Error 200, reqId 42: No security definition has been found for the request, contract: Stock(symbol='IUHC', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IUHC', exchange='LSE', currency='USD')
+Error 200, reqId 43: No security definition has been found for the request, contract: Stock(symbol='IUHC', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IUHC', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 44: No security definition has been found for the request, contract: Stock(symbol='IUHC', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IUHC', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 45: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IUHC', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IUHC', exchange='LSEETF', currency='USD')
+Error 321, reqId 46: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IUHC', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IUHC', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 47: No security definition has been found for the request, contract: Stock(symbol='IUHC', exchange='LSEETF', currency='USD')
+Error 200, reqId 48: No security definition has been found for the request, contract: Stock(symbol='IUHC', exchange='SMART', currency='USD')
+Error 200, reqId 49: No security definition has been found for the request, contract: Contract(secType='STK', symbol='IUIT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='IUIT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 50: No security definition has been found for the request, contract: Stock(symbol='IUIT', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IUIT', exchange='LSEETF', currency='USD')
+Error 200, reqId 51: No security definition has been found for the request, contract: Stock(symbol='IUIT', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IUIT', exchange='LSE', currency='USD')
+Error 200, reqId 52: No security definition has been found for the request, contract: Stock(symbol='IUIT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IUIT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 53: No security definition has been found for the request, contract: Stock(symbol='IUIT', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IUIT', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 54: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IUIT', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IUIT', exchange='LSEETF', currency='USD')
+Error 321, reqId 55: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IUIT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IUIT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 56: No security definition has been found for the request, contract: Stock(symbol='IUIT', exchange='LSEETF', currency='USD')
+Error 200, reqId 57: No security definition has been found for the request, contract: Stock(symbol='IUIT', exchange='SMART', currency='USD')
+Error 200, reqId 58: No security definition has been found for the request, contract: Contract(secType='STK', symbol='IUUS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='IUUS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 59: No security definition has been found for the request, contract: Stock(symbol='IUUS', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IUUS', exchange='LSEETF', currency='USD')
+Error 200, reqId 60: No security definition has been found for the request, contract: Stock(symbol='IUUS', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IUUS', exchange='LSE', currency='USD')
+Error 200, reqId 61: No security definition has been found for the request, contract: Stock(symbol='IUUS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IUUS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 62: No security definition has been found for the request, contract: Stock(symbol='IUUS', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IUUS', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 63: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IUUS', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IUUS', exchange='LSEETF', currency='USD')
+Error 321, reqId 64: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IUUS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IUUS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 65: No security definition has been found for the request, contract: Stock(symbol='IUUS', exchange='LSEETF', currency='USD')
+Error 200, reqId 66: No security definition has been found for the request, contract: Stock(symbol='IUUS', exchange='SMART', currency='USD')
+Error 200, reqId 67: No security definition has been found for the request, contract: Contract(secType='STK', symbol='IWDA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='IWDA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 68: No security definition has been found for the request, contract: Stock(symbol='IWDA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IWDA', exchange='LSEETF', currency='USD')
+Error 200, reqId 69: No security definition has been found for the request, contract: Stock(symbol='IWDA', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IWDA', exchange='LSE', currency='USD')
+Error 200, reqId 70: No security definition has been found for the request, contract: Stock(symbol='IWDA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='IWDA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 71: No security definition has been found for the request, contract: Stock(symbol='IWDA', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='IWDA', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 72: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IWDA', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IWDA', exchange='LSEETF', currency='USD')
+Error 321, reqId 73: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='IWDA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='IWDA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 74: No security definition has been found for the request, contract: Stock(symbol='IWDA', exchange='LSEETF', currency='USD')
+Error 200, reqId 75: No security definition has been found for the request, contract: Stock(symbol='IWDA', exchange='SMART', currency='USD')
+Error 200, reqId 76: No security definition has been found for the request, contract: Stock(symbol='NUCL', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='NUCL', exchange='LSEETF', currency='USD')
+Error 200, reqId 77: No security definition has been found for the request, contract: Stock(symbol='NUCL', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='NUCL', exchange='LSE', currency='USD')
+Error 200, reqId 78: No security definition has been found for the request, contract: Stock(symbol='NUCL', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='NUCL', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 79: No security definition has been found for the request, contract: Stock(symbol='NUCL', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='NUCL', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 80: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='NUCL', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='NUCL', exchange='LSEETF', currency='USD')
+Error 321, reqId 81: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='NUCL', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='NUCL', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 82: No security definition has been found for the request, contract: Stock(symbol='NUCL', exchange='LSEETF', currency='USD')
+Error 200, reqId 83: No security definition has been found for the request, contract: Stock(symbol='NUCL', exchange='SMART', currency='USD')
+Error 200, reqId 84: No security definition has been found for the request, contract: Contract(secType='STK', symbol='PHAG', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='PHAG', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 200, reqId 85: No security definition has been found for the request, contract: Stock(symbol='PHAG', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='PHAG', exchange='LSEETF', currency='USD')
+Error 200, reqId 86: No security definition has been found for the request, contract: Stock(symbol='PHAG', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='PHAG', exchange='LSE', currency='USD')
+Error 200, reqId 87: No security definition has been found for the request, contract: Stock(symbol='PHAG', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='PHAG', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 88: No security definition has been found for the request, contract: Stock(symbol='PHAG', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='PHAG', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 89: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='PHAG', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='PHAG', exchange='LSEETF', currency='USD')
+Error 321, reqId 90: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='PHAG', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='PHAG', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 91: No security definition has been found for the request, contract: Stock(symbol='PHAG', exchange='LSEETF', currency='USD')
+Error 200, reqId 92: No security definition has been found for the request, contract: Stock(symbol='PHAG', exchange='SMART', currency='USD')
+Error 200, reqId 93: No security definition has been found for the request, contract: Contract(secType='STK', symbol='R2US', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='R2US', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 94: No security definition has been found for the request, contract: Stock(symbol='R2US', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='R2US', exchange='LSEETF', currency='USD')
+Error 200, reqId 95: No security definition has been found for the request, contract: Stock(symbol='R2US', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='R2US', exchange='LSE', currency='USD')
+Error 200, reqId 96: No security definition has been found for the request, contract: Stock(symbol='R2US', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='R2US', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 97: No security definition has been found for the request, contract: Stock(symbol='R2US', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='R2US', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 98: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='R2US', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='R2US', exchange='LSEETF', currency='USD')
+Error 321, reqId 99: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='R2US', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='R2US', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 100: No security definition has been found for the request, contract: Stock(symbol='R2US', exchange='LSEETF', currency='USD')
+Error 200, reqId 101: No security definition has been found for the request, contract: Stock(symbol='R2US', exchange='SMART', currency='USD')
+Error 200, reqId 102: No security definition has been found for the request, contract: Contract(secType='STK', symbol='RBOT', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='RBOT', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 200, reqId 103: No security definition has been found for the request, contract: Stock(symbol='RBOT', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='RBOT', exchange='LSEETF', currency='USD')
+Error 200, reqId 104: No security definition has been found for the request, contract: Stock(symbol='RBOT', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='RBOT', exchange='LSE', currency='USD')
+Error 200, reqId 105: No security definition has been found for the request, contract: Stock(symbol='RBOT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='RBOT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 106: No security definition has been found for the request, contract: Stock(symbol='RBOT', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='RBOT', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 107: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='RBOT', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='RBOT', exchange='LSEETF', currency='USD')
+Error 321, reqId 108: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='RBOT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='RBOT', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 109: No security definition has been found for the request, contract: Stock(symbol='RBOT', exchange='LSEETF', currency='USD')
+Error 200, reqId 110: No security definition has been found for the request, contract: Stock(symbol='RBOT', exchange='SMART', currency='USD')
+Error 200, reqId 111: No security definition has been found for the request, contract: Contract(secType='STK', symbol='RENW', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='RENW', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 112: No security definition has been found for the request, contract: Stock(symbol='RENW', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='RENW', exchange='LSEETF', currency='USD')
+Error 200, reqId 113: No security definition has been found for the request, contract: Stock(symbol='RENW', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='RENW', exchange='LSE', currency='USD')
+Error 200, reqId 114: No security definition has been found for the request, contract: Stock(symbol='RENW', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='RENW', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 115: No security definition has been found for the request, contract: Stock(symbol='RENW', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='RENW', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 116: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='RENW', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='RENW', exchange='LSEETF', currency='USD')
+Error 321, reqId 117: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='RENW', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='RENW', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 118: No security definition has been found for the request, contract: Stock(symbol='RENW', exchange='LSEETF', currency='USD')
+Error 200, reqId 119: No security definition has been found for the request, contract: Stock(symbol='RENW', exchange='SMART', currency='USD')
+Error 200, reqId 120: No security definition has been found for the request, contract: Contract(secType='STK', symbol='SBIO', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='SBIO', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 121: No security definition has been found for the request, contract: Stock(symbol='SBIO', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SBIO', exchange='LSEETF', currency='USD')
+Error 200, reqId 122: No security definition has been found for the request, contract: Stock(symbol='SBIO', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SBIO', exchange='LSE', currency='USD')
+Error 200, reqId 123: No security definition has been found for the request, contract: Stock(symbol='SBIO', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SBIO', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 124: No security definition has been found for the request, contract: Stock(symbol='SBIO', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SBIO', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 125: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SBIO', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SBIO', exchange='LSEETF', currency='USD')
+Error 321, reqId 126: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SBIO', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SBIO', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 127: No security definition has been found for the request, contract: Stock(symbol='SBIO', exchange='LSEETF', currency='USD')
+Error 200, reqId 128: No security definition has been found for the request, contract: Stock(symbol='SBIO', exchange='SMART', currency='USD')
+Error 200, reqId 129: No security definition has been found for the request, contract: Contract(secType='STK', symbol='SGLD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='SGLD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 130: No security definition has been found for the request, contract: Stock(symbol='SGLD', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SGLD', exchange='LSEETF', currency='USD')
+Error 200, reqId 131: No security definition has been found for the request, contract: Stock(symbol='SGLD', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SGLD', exchange='LSE', currency='USD')
+Error 200, reqId 132: No security definition has been found for the request, contract: Stock(symbol='SGLD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SGLD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 133: No security definition has been found for the request, contract: Stock(symbol='SGLD', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SGLD', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 134: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SGLD', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SGLD', exchange='LSEETF', currency='USD')
+Error 321, reqId 135: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SGLD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SGLD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 136: No security definition has been found for the request, contract: Stock(symbol='SGLD', exchange='LSEETF', currency='USD')
+Error 200, reqId 137: No security definition has been found for the request, contract: Stock(symbol='SGLD', exchange='SMART', currency='USD')
+Error 200, reqId 138: No security definition has been found for the request, contract: Contract(secType='STK', symbol='SILV', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='SILV', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 139: No security definition has been found for the request, contract: Stock(symbol='SILV', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SILV', exchange='LSEETF', currency='USD')
+Error 200, reqId 140: No security definition has been found for the request, contract: Stock(symbol='SILV', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SILV', exchange='LSE', currency='USD')
+Error 200, reqId 141: No security definition has been found for the request, contract: Stock(symbol='SILV', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SILV', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 142: No security definition has been found for the request, contract: Stock(symbol='SILV', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SILV', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 143: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SILV', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SILV', exchange='LSEETF', currency='USD')
+Error 321, reqId 144: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SILV', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SILV', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 145: No security definition has been found for the request, contract: Stock(symbol='SILV', exchange='LSEETF', currency='USD')
+Error 200, reqId 146: No security definition has been found for the request, contract: Stock(symbol='SILV', exchange='SMART', currency='USD')
+Error 200, reqId 147: No security definition has been found for the request, contract: Contract(secType='STK', symbol='SMH', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='SMH', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 148: No security definition has been found for the request, contract: Stock(symbol='SMH', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SMH', exchange='LSEETF', currency='USD')
+Error 200, reqId 149: No security definition has been found for the request, contract: Stock(symbol='SMH', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SMH', exchange='LSE', currency='USD')
+Error 200, reqId 150: No security definition has been found for the request, contract: Stock(symbol='SMH', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='SMH', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 151: No security definition has been found for the request, contract: Stock(symbol='SMH', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='SMH', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 152: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SMH', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SMH', exchange='LSEETF', currency='USD')
+Error 321, reqId 153: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='SMH', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='SMH', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 154: No security definition has been found for the request, contract: Stock(symbol='SMH', exchange='LSEETF', currency='USD')
+Error 200, reqId 155: No security definition has been found for the request, contract: Stock(symbol='SMH', exchange='SMART', currency='USD')
+Error 200, reqId 156: No security definition has been found for the request, contract: Contract(secType='STK', symbol='URNJ', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='URNJ', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 157: No security definition has been found for the request, contract: Stock(symbol='URNJ', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='URNJ', exchange='LSEETF', currency='USD')
+Error 200, reqId 158: No security definition has been found for the request, contract: Stock(symbol='URNJ', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='URNJ', exchange='LSE', currency='USD')
+Error 200, reqId 159: No security definition has been found for the request, contract: Stock(symbol='URNJ', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='URNJ', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 160: No security definition has been found for the request, contract: Stock(symbol='URNJ', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='URNJ', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 161: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='URNJ', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='URNJ', exchange='LSEETF', currency='USD')
+Error 321, reqId 162: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='URNJ', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='URNJ', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 163: No security definition has been found for the request, contract: Stock(symbol='URNJ', exchange='LSEETF', currency='USD')
+Error 200, reqId 164: No security definition has been found for the request, contract: Stock(symbol='URNJ', exchange='SMART', currency='USD')
+Error 200, reqId 165: No security definition has been found for the request, contract: Contract(secType='STK', symbol='URNM', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='URNM', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 166: No security definition has been found for the request, contract: Stock(symbol='URNM', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='URNM', exchange='LSEETF', currency='USD')
+Error 200, reqId 167: No security definition has been found for the request, contract: Stock(symbol='URNM', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='URNM', exchange='LSE', currency='USD')
+Error 200, reqId 168: No security definition has been found for the request, contract: Stock(symbol='URNM', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='URNM', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 169: No security definition has been found for the request, contract: Stock(symbol='URNM', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='URNM', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 170: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='URNM', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='URNM', exchange='LSEETF', currency='USD')
+Error 321, reqId 171: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='URNM', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='URNM', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 172: No security definition has been found for the request, contract: Stock(symbol='URNM', exchange='LSEETF', currency='USD')
+Error 200, reqId 173: No security definition has been found for the request, contract: Stock(symbol='URNM', exchange='SMART', currency='USD')
+Error 200, reqId 174: No security definition has been found for the request, contract: Contract(secType='STK', symbol='USPY', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='USPY', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 175: No security definition has been found for the request, contract: Stock(symbol='USPY', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='USPY', exchange='LSEETF', currency='USD')
+Error 200, reqId 176: No security definition has been found for the request, contract: Stock(symbol='USPY', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='USPY', exchange='LSE', currency='USD')
+Error 200, reqId 177: No security definition has been found for the request, contract: Stock(symbol='USPY', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='USPY', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 178: No security definition has been found for the request, contract: Stock(symbol='USPY', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='USPY', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 179: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='USPY', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='USPY', exchange='LSEETF', currency='USD')
+Error 321, reqId 180: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='USPY', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='USPY', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 181: No security definition has been found for the request, contract: Stock(symbol='USPY', exchange='LSEETF', currency='USD')
+Error 200, reqId 182: No security definition has been found for the request, contract: Stock(symbol='USPY', exchange='SMART', currency='USD')
+Error 200, reqId 183: No security definition has been found for the request, contract: Contract(secType='STK', symbol='VUAA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='VUAA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 184: No security definition has been found for the request, contract: Stock(symbol='VUAA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='VUAA', exchange='LSEETF', currency='USD')
+Error 200, reqId 185: No security definition has been found for the request, contract: Stock(symbol='VUAA', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='VUAA', exchange='LSE', currency='USD')
+Error 200, reqId 186: No security definition has been found for the request, contract: Stock(symbol='VUAA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='VUAA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 187: No security definition has been found for the request, contract: Stock(symbol='VUAA', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='VUAA', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 188: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='VUAA', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='VUAA', exchange='LSEETF', currency='USD')
+Error 321, reqId 189: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='VUAA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='VUAA', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 190: No security definition has been found for the request, contract: Stock(symbol='VUAA', exchange='LSEETF', currency='USD')
+Error 200, reqId 191: No security definition has been found for the request, contract: Stock(symbol='VUAA', exchange='SMART', currency='USD')
+Error 200, reqId 192: No security definition has been found for the request, contract: Contract(secType='STK', symbol='XMED', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='XMED', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 193: No security definition has been found for the request, contract: Stock(symbol='XMED', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XMED', exchange='LSEETF', currency='USD')
+Error 200, reqId 194: No security definition has been found for the request, contract: Stock(symbol='XMED', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XMED', exchange='LSE', currency='USD')
+Error 200, reqId 195: No security definition has been found for the request, contract: Stock(symbol='XMED', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XMED', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 196: No security definition has been found for the request, contract: Stock(symbol='XMED', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XMED', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 197: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XMED', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XMED', exchange='LSEETF', currency='USD')
+Error 321, reqId 198: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XMED', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XMED', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 199: No security definition has been found for the request, contract: Stock(symbol='XMED', exchange='LSEETF', currency='USD')
+Error 200, reqId 200: No security definition has been found for the request, contract: Stock(symbol='XMED', exchange='SMART', currency='USD')
+Error 200, reqId 201: No security definition has been found for the request, contract: Contract(secType='STK', symbol='XNAS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='XNAS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 202: No security definition has been found for the request, contract: Stock(symbol='XNAS', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XNAS', exchange='LSEETF', currency='USD')
+Error 200, reqId 203: No security definition has been found for the request, contract: Stock(symbol='XNAS', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XNAS', exchange='LSE', currency='USD')
+Error 200, reqId 204: No security definition has been found for the request, contract: Stock(symbol='XNAS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XNAS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 205: No security definition has been found for the request, contract: Stock(symbol='XNAS', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XNAS', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 206: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XNAS', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XNAS', exchange='LSEETF', currency='USD')
+Error 321, reqId 207: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XNAS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XNAS', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 208: No security definition has been found for the request, contract: Stock(symbol='XNAS', exchange='LSEETF', currency='USD')
+Error 200, reqId 209: No security definition has been found for the request, contract: Stock(symbol='XNAS', exchange='SMART', currency='USD')
+Error 200, reqId 210: No security definition has been found for the request, contract: Contract(secType='STK', symbol='XS2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='XS2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 211: No security definition has been found for the request, contract: Stock(symbol='XS2D', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XS2D', exchange='LSEETF', currency='USD')
+Error 200, reqId 212: No security definition has been found for the request, contract: Stock(symbol='XS2D', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XS2D', exchange='LSE', currency='USD')
+Error 200, reqId 213: No security definition has been found for the request, contract: Stock(symbol='XS2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XS2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 214: No security definition has been found for the request, contract: Stock(symbol='XS2D', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XS2D', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 215: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XS2D', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XS2D', exchange='LSEETF', currency='USD')
+Error 321, reqId 216: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XS2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XS2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 217: No security definition has been found for the request, contract: Stock(symbol='XS2D', exchange='LSEETF', currency='USD')
+Error 200, reqId 218: No security definition has been found for the request, contract: Stock(symbol='XS2D', exchange='SMART', currency='USD')
+Error 200, reqId 219: No security definition has been found for the request, contract: Contract(secType='STK', symbol='XSPD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='XSPD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 220: No security definition has been found for the request, contract: Stock(symbol='XSPD', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XSPD', exchange='LSEETF', currency='USD')
+Error 200, reqId 221: No security definition has been found for the request, contract: Stock(symbol='XSPD', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XSPD', exchange='LSE', currency='USD')
+Error 200, reqId 222: No security definition has been found for the request, contract: Stock(symbol='XSPD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XSPD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 223: No security definition has been found for the request, contract: Stock(symbol='XSPD', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XSPD', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 224: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XSPD', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XSPD', exchange='LSEETF', currency='USD')
+Error 321, reqId 225: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XSPD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XSPD', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 226: No security definition has been found for the request, contract: Stock(symbol='XSPD', exchange='LSEETF', currency='USD')
+Error 200, reqId 227: No security definition has been found for the request, contract: Stock(symbol='XSPD', exchange='SMART', currency='USD')
+Error 200, reqId 228: No security definition has been found for the request, contract: Contract(secType='STK', symbol='XT2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='STK', symbol='XT2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 229: No security definition has been found for the request, contract: Stock(symbol='XT2D', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XT2D', exchange='LSEETF', currency='USD')
+Error 200, reqId 230: No security definition has been found for the request, contract: Stock(symbol='XT2D', exchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XT2D', exchange='LSE', currency='USD')
+Error 200, reqId 231: No security definition has been found for the request, contract: Stock(symbol='XT2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='XT2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 232: No security definition has been found for the request, contract: Stock(symbol='XT2D', exchange='SMART', primaryExchange='LSE', currency='USD')
+Unknown contract: Stock(symbol='XT2D', exchange='SMART', primaryExchange='LSE', currency='USD')
+Error 321, reqId 233: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XT2D', exchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XT2D', exchange='LSEETF', currency='USD')
+Error 321, reqId 234: Error validating request.-'bK' : cause - Please enter a valid security type, contract: Contract(secType='ETF', symbol='XT2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Unknown contract: Contract(secType='ETF', symbol='XT2D', exchange='SMART', primaryExchange='LSEETF', currency='USD')
+Error 200, reqId 235: No security definition has been found for the request, contract: Stock(symbol='XT2D', exchange='LSEETF', currency='USD')
+Error 200, reqId 236: No security definition has been found for the request, contract: Stock(symbol='XT2D', exchange='SMART', currency='USD')
+account updates for U12796496 request timed out
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s13_market_trends_update.py", line 444, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s13_market_trends_update.py", line 403, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1782, in connectAsync
+    await asyncio.wait_for(self.reqExecutionsAsync(), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 506, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/timeouts.py", line 116, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 283, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 245, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 283, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 245, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 283, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 245, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+Error 200, reqId 8: No security definition has been found for the request, contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Error 200, reqId 15: No security definition has been found for the request, contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Error 200, reqId 8: No security definition has been found for the request, contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Error 200, reqId 15: No security definition has been found for the request, contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 283, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 245, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)
+Error 200, reqId 8: No security definition has been found for the request, contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Error 200, reqId 15: No security definition has been found for the request, contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Error 200, reqId 8: No security definition has been found for the request, contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='AIGI', exchange='LSEETF', currency='USD')
+Error 200, reqId 15: No security definition has been found for the request, contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+Unknown contract: Stock(symbol='COPA', exchange='LSEETF', currency='USD')
+[ERR] Missing script: /Users/Finance/scripts/s00_data_integrity_enrichment.py
+API connection failed: ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 7496)")
+Make sure API port on TWS/IBG is open
+Traceback (most recent call last):
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 283, in <module>
+    main()
+    ~~~~^^
+  File "/Users/Finance/QuantETFUS_small/scripts/s10_ibkr_download_daily.py", line 245, in main
+    ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 279, in connect
+    return self._run(self.connectAsync(
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        host, port, clientId, timeout, readonly, account))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 318, in _run
+    return util.run(*awaitables, timeout=self.RequestTimeout)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/util.py", line 341, in run
+    result = loop.run_until_complete(task)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/ib.py", line 1748, in connectAsync
+    await self.client.connectAsync(host, port, clientId, timeout)
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/client.py", line 211, in connectAsync
+    await asyncio.wait_for(self.conn.connectAsync(host, port), timeout)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 507, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/Finance/QuantETFUS_small/venv/lib/python3.13/site-packages/ib_insync/connection.py", line 39, in connectAsync
+    self.transport, _ = await loop.create_connection(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: self, host, port)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1161, in create_connection
+    raise exceptions[0]
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1136, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1039, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 641, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/selector_events.py", line 681, in _sock_connect_cb
+    raise OSError(err, f'Connect call failed {address}')
+ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 7496)

@@ -1,0 +1,190 @@
+[2025-09-12 20:20:08 UTC] === US-PRECLOSE REFRESH (v1) START ===
+[2025-09-12 20:20:08 UTC] s10_ibkr_download_daily → s10_ibkr_download_daily.py --client_id 88
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | out=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[IB] Connecting 127.0.0.1:7496 (clientId=88) …
+[IB] Connected.
+[1/35] BATT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/BATT_daily_raw.csv
+[2/35] COPX: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/COPX_daily_raw.csv
+[3/35] DGTL: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/DGTL_daily_raw.csv
+[4/35] GDX: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDX_daily_raw.csv
+[5/35] GDXJ: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/GDXJ_daily_raw.csv
+[6/35] IOGP: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IOGP_daily_raw.csv
+[7/35] ISAC: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ISAC_daily_raw.csv
+[8/35] ISUN: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ISUN_daily_raw.csv
+[9/35] IUCM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCM_daily_raw.csv
+[10/35] IUCS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUCS_daily_raw.csv
+[11/35] IUES: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUES_daily_raw.csv
+[12/35] IUFS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUFS_daily_raw.csv
+[13/35] IUHC: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUHC_daily_raw.csv
+[14/35] IUIT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUIT_daily_raw.csv
+[15/35] IUUS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IUUS_daily_raw.csv
+[16/35] IWDA: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/IWDA_daily_raw.csv
+[17/35] PHAG: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/PHAG_daily_raw.csv
+[18/35] RBOT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/RBOT_daily_raw.csv
+[19/35] RENW: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/RENW_daily_raw.csv
+[20/35] SBIO: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SBIO_daily_raw.csv
+[21/35] SMH: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SMH_daily_raw.csv
+[22/35] SGLD: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SGLD_daily_raw.csv
+[23/35] SILV: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/SILV_daily_raw.csv
+[24/35] URNJ: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/URNJ_daily_raw.csv
+[25/35] URNM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/URNM_daily_raw.csv
+[26/35] USPY: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/USPY_daily_raw.csv
+[27/35] VUAA: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/VUAA_daily_raw.csv
+[28/35] XNAS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XNAS_daily_raw.csv
+[29/35] XS2D: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XS2D_daily_raw.csv
+[30/35] XSPD: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XSPD_daily_raw.csv
+[31/35] XT2D: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XT2D_daily_raw.csv
+[32/35] AIGA: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIGA_daily_raw.csv
+[33/35] AIAI: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/AIAI_daily_raw.csv
+[34/35] XMED: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/XMED_daily_raw.csv
+[35/35] ICOM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/daily/ICOM_daily_raw.csv
+[DONE] s10_ibkr_download_daily (append-only, UTC) complete.
+[2025-09-12 20:22:19 UTC] s12_ibkr_download_weekly → s12_ibkr_download_weekly.py
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | outdir=/Users/Finance/QuantShared/data_raw_ETF_US/weekly
+[INFO] Excel=/Users/Finance/QuantShared/ETF_list.xlsx | sheet=signalsUSD | outdir=/Users/Finance/QuantShared/data_raw_ETF_US/weekly
+[IB] Connecting 127.0.0.1:7496 (clientId=62) …
+[IB] Connected.
+[1/35] BATT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/BATT_weekly_raw.csv
+[2/35] COPX: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/COPX_weekly_raw.csv
+[3/35] DGTL: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/DGTL_weekly_raw.csv
+[4/35] GDX: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/GDX_weekly_raw.csv
+[5/35] GDXJ: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/GDXJ_weekly_raw.csv
+[6/35] IOGP: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IOGP_weekly_raw.csv
+[7/35] ISAC: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/ISAC_weekly_raw.csv
+[8/35] ISUN: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/ISUN_weekly_raw.csv
+[9/35] IUCM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUCM_weekly_raw.csv
+[10/35] IUCS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUCS_weekly_raw.csv
+[11/35] IUES: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUES_weekly_raw.csv
+[12/35] IUFS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUFS_weekly_raw.csv
+[13/35] IUHC: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUHC_weekly_raw.csv
+[14/35] IUIT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUIT_weekly_raw.csv
+[15/35] IUUS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IUUS_weekly_raw.csv
+[16/35] IWDA: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/IWDA_weekly_raw.csv
+[17/35] PHAG: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/PHAG_weekly_raw.csv
+[18/35] RBOT: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/RBOT_weekly_raw.csv
+[19/35] RENW: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/RENW_weekly_raw.csv
+[20/35] SBIO: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/SBIO_weekly_raw.csv
+[21/35] SMH: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/SMH_weekly_raw.csv
+[22/35] SGLD: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/SGLD_weekly_raw.csv
+[23/35] SILV: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/SILV_weekly_raw.csv
+[24/35] URNJ: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/URNJ_weekly_raw.csv
+[25/35] URNM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/URNM_weekly_raw.csv
+[26/35] USPY: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/USPY_weekly_raw.csv
+[27/35] VUAA: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/VUAA_weekly_raw.csv
+[28/35] XNAS: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/XNAS_weekly_raw.csv
+[29/35] XS2D: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/XS2D_weekly_raw.csv
+[30/35] XSPD: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/XSPD_weekly_raw.csv
+[31/35] XT2D: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/XT2D_weekly_raw.csv
+[32/35] AIGA: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/AIGA_weekly_raw.csv
+[33/35] AIAI: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/AIAI_weekly_raw.csv
+[34/35] XMED: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/XMED_weekly_raw.csv
+[35/35] ICOM: +0 rows → /Users/Finance/QuantShared/data_raw_ETF_US/weekly/ICOM_weekly_raw.csv
+[DONE] s12_ibkr_download_weekly complete.
+[2025-09-12 20:22:48 UTC] s13_market_trends_update → s13_market_trends_update.py
+[INFO] Using list: /Users/Finance/QuantShared/ETF_list.xlsx | sheet=market_trends | tickers=66
+[IB] Connecting 127.0.0.1:7496 (clientId=63) …
+[IB] Connected.
+CEW_DXY_ratio_TV_daily.csv: skip (ratio/composite)
+CEW [STK/TRADES]: +0 rows → CEW_TV_daily.csv
+DBC_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+DBC_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+DBC [STK/TRADES]: +0 rows → DBC_TV_daily.csv
+DIA_QQQ_ratio_TV_daily.csv: skip (ratio/composite)
+DIA [STK/TRADES]: +0 rows → DIA_TV_daily.csv
+DXY_TV_daily.csv: skip (ticker not in ETF_list.xlsx → market_trends)
+EEM_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+EEM [STK/TRADES]: +0 rows → EEM_TV_daily.csv
+EFA_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+EFA [STK/TRADES]: +0 rows → EFA_TV_daily.csv
+FEZ_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+FEZ [STK/TRADES]: +0 rows → FEZ_TV_daily.csv
+GDX [STK/TRADES]: +0 rows → GDX_TV_daily.csv
+GLD_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+GLD_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+GLD [STK/TRADES]: +0 rows → GLD_TV_daily.csv
+HYG_IEI_ratio_TV_daily.csv: skip (ratio/composite)
+HYG_LQD_ratio_TV_daily.csv: skip (ratio/composite)
+HYG_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+HYG [STK/TRADES]: +0 rows → HYG_TV_daily.csv
+IEI [STK/TRADES]: +0 rows → IEI_TV_daily.csv
+IWC [STK/TRADES]: +0 rows → IWC_TV_daily.csv
+IWM [STK/TRADES]: +0 rows → IWM_TV_daily.csv
+JNK_LQD_ratio_TV_daily.csv: skip (ratio/composite)
+JNK [STK/TRADES]: +0 rows → JNK_TV_daily.csv
+KRE [STK/TRADES]: +0 rows → KRE_TV_daily.csv
+LQD_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+LQD [STK/TRADES]: +0 rows → LQD_TV_daily.csv
+PC_TV_daily.csv: skip (ticker not in ETF_list.xlsx → market_trends)
+QQQ_IWM_ratio_TV_daily.csv: skip (ratio/composite)
+QQQ_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+QQQ_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+QQQ [STK/TRADES]: +0 rows → QQQ_TV_daily.csv
+RSP_QQQ_ratio_TV_daily.csv: skip (ratio/composite)
+RSP_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+RSP [STK/TRADES]: +0 rows → RSP_TV_daily.csv
+SLV [STK/TRADES]: +0 rows → SLV_TV_daily.csv
+SPHB_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+SPHB [STK/TRADES]: +0 rows → SPHB_TV_daily.csv
+SPYD [STK/TRADES]: +0 rows → SPYD_TV_daily.csv
+SPY_TLT_ratio_TV_daily.csv: skip (ratio/composite)
+SPY [STK/TRADES]: +0 rows → SPY_TV_daily.csv
+TLT [STK/TRADES]: +0 rows → TLT_TV_daily.csv
+VIX3M [IND/TRADES]: +0 rows → VIX3M_TV_daily.csv
+VIX9D [IND/TRADES]: +0 rows → VIX9D_TV_daily.csv
+VIX [IND/TRADES]: +0 rows → VIX_TV_daily.csv
+VVIX [IND/TRADES]: +0 rows → VVIX_TV_daily.csv
+XHB [STK/TRADES]: +0 rows → XHB_TV_daily.csv
+XLB [STK/TRADES]: +0 rows → XLB_TV_daily.csv
+XLC [STK/TRADES]: +0 rows → XLC_TV_daily.csv
+XLE [STK/TRADES]: +0 rows → XLE_TV_daily.csv
+XLF [STK/TRADES]: +0 rows → XLF_TV_daily.csv
+XLI [STK/TRADES]: +0 rows → XLI_TV_daily.csv
+XLK [STK/TRADES]: +0 rows → XLK_TV_daily.csv
+XLP_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+XLP [STK/TRADES]: +0 rows → XLP_TV_daily.csv
+XLRE [STK/TRADES]: +0 rows → XLRE_TV_daily.csv
+XLU_SPY_ratio_TV_daily.csv: skip (ratio/composite)
+XLU [STK/TRADES]: +0 rows → XLU_TV_daily.csv
+XLU_XLV_XLP_composite_TV_daily.csv: skip (ratio/composite)
+XLV [STK/TRADES]: +0 rows → XLV_TV_daily.csv
+XLY [STK/TRADES]: +0 rows → XLY_TV_daily.csv
+XLY_XLP_ratio_TV_daily.csv: skip (ratio/composite)
+[IB] Disconnected.
+[RATIO] DBC/SPY: rows=2526 → DBC_SPY_ratio_TV_daily.csv
+[RATIO] DBC/TLT: rows=2526 → DBC_TLT_ratio_TV_daily.csv
+[RATIO] DIA/QQQ: rows=2526 → DIA_QQQ_ratio_TV_daily.csv
+[RATIO] EEM/SPY: rows=2527 → EEM_SPY_ratio_TV_daily.csv
+[RATIO] EFA/SPY: rows=2527 → EFA_SPY_ratio_TV_daily.csv
+[RATIO] FEZ/SPY: rows=2527 → FEZ_SPY_ratio_TV_daily.csv
+[RATIO] GLD/SPY: rows=5237 → GLD_SPY_ratio_TV_daily.csv
+[RATIO] GLD/TLT: rows=5237 → GLD_TLT_ratio_TV_daily.csv
+[RATIO] HYG/IEI: rows=2039 → HYG_IEI_ratio_TV_daily.csv
+[RATIO] JNK/LQD: rows=2526 → JNK_LQD_ratio_TV_daily.csv
+[RATIO] QQQ/IWM: rows=2526 → QQQ_IWM_ratio_TV_daily.csv
+[RATIO] QQQ/SPY: rows=2526 → QQQ_SPY_ratio_TV_daily.csv
+[RATIO] SPHB/SPY: rows=2526 → SPHB_SPY_ratio_TV_daily.csv
+[RATIO] XLP/SPY: rows=6722 → XLP_SPY_ratio_TV_daily.csv
+[RATIO] XLY/XLP: rows=6722 → XLY_XLP_ratio_TV_daily.csv
+[RATIO] HYG/TLT: rows=4637 → HYG_TLT_ratio_TV_daily.csv
+[RATIO MISS] Missing input: /Users/Finance/QuantShared/market_trends/EMB_TV_daily.csv
+[RATIO] LQD/TLT: rows=2527 → LQD_TLT_ratio_TV_daily.csv
+[RATIO] RSP/SPY: rows=5630 → RSP_SPY_ratio_TV_daily.csv
+[RATIO] RSP/QQQ: rows=2526 → RSP_QQQ_ratio_TV_daily.csv
+[RATIO] SPY/TLT: rows=5821 → SPY_TLT_ratio_TV_daily.csv
+[RATIO] QQQ/TLT: rows=2526 → QQQ_TLT_ratio_TV_daily.csv
+[RATIO MISS] Missing input: /Users/Finance/QuantShared/market_trends/UUP_TV_daily.csv
+[COMP ] XLU_XLV_XLP_composite: rows=6722 → XLU_XLV_XLP_composite_TV_daily.csv
+[DONE] s13_market_trends_update complete.
+[2025-09-12 20:24:18 UTC] s14_forex_update → s14_forex_update.py
+[IB] Connecting 127.0.0.1:7496 (clientId=64) …
+[IB] Connected.
+[OK] USDEUR: +0 rows → /Users/Finance/QuantShared/forex/USDEUR_daily.csv
+[IB] Disconnected.
+[2025-09-12 20:24:22 UTC] s20_make_master_daily → s20_make_master_daily.py
+[s20] ROOT=/Users/Finance
+[s20] DATA_RAW(project)=/Users/Finance/data_raw
+[s20] SHARED_BASE=/Users/Finance/QuantShared/data_raw_ETF_US
+[s20] TT daily dir (read)=/Users/Finance/QuantShared/data_raw_ETF_US/daily
+[s20] ETF list=/Users/Finance/QuantShared/ETF_list.xlsx (sheet=US_small)
+[OK] Wrote /Users/Finance/data_raw/etf_prices_daily_master.csv | rows=70,127 | tickers=35
+[2025-09-12 20:24:25 UTC] s30_enrich_to_parquet → s30_enrich_to_parquet.py

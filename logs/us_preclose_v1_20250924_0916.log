@@ -1,0 +1,9 @@
+[2025-09-24 09:16:31 UTC] === US-PRECLOSE REFRESH (v1) START ===
+[2025-09-24 09:16:31 UTC] ticker_mapping.csv present → /Users/Finance/QuantETFUS_small/config/ticker_mapping.csv
+[2025-09-24 09:16:31 UTC] s06_full_30min_historical → s06_full_30min_historical.py --client_id 57 --years 10 --sheet signalsUSD
+usage: s06_full_30min_historical.py [-h] [--host HOST] [--port PORT]
+                                    [--client_id CLIENT_ID] [--years YEARS]
+                                    [--probe_days PROBE_DAYS]
+                                    [--sleep_ms SLEEP_MS] [--limit LIMIT]
+                                    [--only [ONLY ...]] [--skip [SKIP ...]]
+s06_full_30min_historical.py: error: unrecognized arguments: --sheet signalsUSD
