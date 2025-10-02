@@ -276,6 +276,8 @@ def main():
         raise SystemExit("[ERR] No stats produced.")
 
     X = pd.DataFrame(rows)
+    if 'window_start' in X.columns:
+        X['window_start'] = pd.to_datetime(X['window_start'], errors='coerce')
     X.to_parquet(out_path, index=False)
     print(f"[OK] Stretch & short-horizon stats → {out_path}  (rows={len(X)})")
     csv_path = out_path.with_suffix(".csv")
