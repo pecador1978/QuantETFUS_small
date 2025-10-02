@@ -15,6 +15,9 @@ output/
 site/
 _trash_*/
 
+# Ignore backup JSONs (keep main configs)
+*_backup.json
+
 # --- Large file types (never in GitHub) ---
 *.parquet
 *.csv
