@@ -130,17 +130,34 @@ def read_30m(path: Path) -> pd.DataFrame:
 
 def enrich_30m_only(df: pd.DataFrame, market_tz: str) -> pd.DataFrame:
     out = df.copy()
-    out["m30_ema275"] = ema(out["close"], 275)
-    out["m30_dist_to_ema275_pct"] = out["close"].div(out["m30_ema275"]).sub(1.0)
+
+    # ---- configurable base length: default to 340 bars (20 days * 17 bars/day) ----
+    # You can override at run time:  M30_EMA_BARS=340 python s32_...
+    base_len = int(os.environ.get("M30_EMA_BARS", "340"))
+
+    # New, stable alias for "20 trading days on 30m"
+    out["m30_ema20d"] = ema(out["close"], base_len)
+    out["m30_dist_to_ema20d_pct"] = out["close"].div(out["m30_ema20d"]).sub(1.0)
+
+    # ---- legacy compatibility (was hardcoded 275) ----
+    # Keep producing the old columns so nothing downstream breaks while you migrate.
+    if "m30_ema275" not in out.columns:
+        out["m30_ema275"] = out["m30_ema20d"]  # soft alias during transition
+    if "m30_dist_to_ema275_pct" not in out.columns:
+        out["m30_dist_to_ema275_pct"] = out["m30_dist_to_ema20d_pct"]
+
+    # Intraday ATR pack
     out["m30_atr14"] = atr(out, 14)
     out["m30_atr14_norm"] = out["m30_atr14"] / out["close"]
 
-    for w in (80,160):
+    # Recent HH/LL windows
+    for w in (80, 160):
         hh = out["high"].rolling(w).max()
         ll = out["low"].rolling(w).min()
         out[f"m30_hh{w}_from_close_pct"] = hh.div(out["close"]).sub(1.0)
         out[f"m30_ll{w}_from_close_pct"] = out["close"].div(ll).sub(1.0).mul(-1.0)
 
+    # Local time helpers
     local = out["datetime"].dt.tz_convert(market_tz)
     out["m30_entry_hour"] = local.dt.hour.astype("Int64")
     out["m30_weekday"]    = local.dt.weekday.astype("Int64")
@@ -267,9 +284,32 @@ def main():
             try:
                 if etf_keep:
                     dctx = load_etf_daily(Path(args.daily_context), t, etf_keep, mkt_tz)
-                    e = e.merge(dctx, on="date_local", how="left")
+
+                    if not dctx.empty:
+                        # ensure datetime64[ns] for both; and sorted for merge_asof
+                        e["date_local"]    = pd.to_datetime(e["date_local"])
+                        dctx["date_local"] = pd.to_datetime(dctx["date_local"])
+
+                        e = pd.merge_asof(
+                                e.sort_values("date_local"),
+                                dctx.sort_values("date_local"),
+                                on="date_local",
+                                direction="backward"   # use last known daily <= this day
+                            ).sort_index()
+                    else:
+                        print(f"[WARN] {t}: no daily rows in {args.daily_context}; daily overlays will be NaN.")
             except Exception as ex:
                 print(f"[WARN] {t}: ETF daily merge skipped → {ex}")
+
+            # Macro/FX daily (ALL columns) by local date
+            try:
+                if not macro_ctx.empty:
+                    # make macro_ctx date_local same dtype as e (datetime64[ns])
+                    macro_ctx = macro_ctx.copy()
+                    macro_ctx["date_local"] = pd.to_datetime(macro_ctx["date_local"])
+                    e = e.merge(macro_ctx, on="date_local", how="left")
+            except Exception as ex:
+                print(f"[WARN] {t}: Macro daily merge skipped → {ex}")
 
             # Macro/FX daily (ALL columns) by local date
             try:

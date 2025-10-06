@@ -137,5 +137,37 @@ say "Log → $LOGFILE"
 # Update "latest" symlink in signals/
 LATEST="/Users/Finance/QuantShared/signals/1_signals_dashboard_latest_gate1_v1.0.html"
 NEWEST=$(ls -t /Users/Finance/QuantShared/signals/signals_dashboard_gate1_v1.0_*.html | head -n1)
-ln -sfn "$NEWEST" "$LATEST"
-echo "[OK] Symlinked latest dashboard → $LATEST"
+
+# delete any stray "… v1.0 2.html"/"… v1.0 3.html" files
+rm -f "/Users/Finance/QuantShared/signals/1_signals_dashboard_latest_gate1_v1.0 "?.html \
+      "/Users/Finance/QuantShared/signals/1_signals_dashboard_latest_gate1_v1.0 "??.html" 2>/dev/null || true
+
+# write latest as a REAL file (atomic)
+TMP=$(mktemp "/Users/Finance/QuantShared/signals/.latest_XXXXXX.html")
+cp -f "$NEWEST" "$TMP" && mv -f "$TMP" "$LATEST"
+
+echo "[OK] Latest dashboard file → $LATEST"
+
+# ---- Retention: keep only the last 3 files per pattern ----
+DIR="/Users/Finance/QuantShared/signals"
+keep_last=3
+
+prune_keep_n () {
+  local dir="$1"; shift
+  local keep="$1"; shift
+  for pattern in "$@"; do
+    # list newest-first; ignore if no matches
+    mapfile -t files < <(ls -t "$dir"/$pattern 2>/dev/null || true)
+    if (( ${#files[@]} > keep )); then
+      printf '%s\0' "${files[@]:keep}" | xargs -0 rm -f --
+      echo "[CLEAN] $pattern → kept $keep, removed $((${#files[@]}-keep))"
+    fi
+  done
+}
+
+prune_keep_n "$DIR" "$keep_last" \
+  "operator_today_RULE_all_*" \
+  "operator_today_RULE_top10_*" \
+  "rule_live_signals_*.metadata" \
+  "rule_live_signals_*.csv" \
+  "signals_dashboard_gate1_v1.0_*.html"

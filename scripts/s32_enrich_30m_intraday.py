@@ -5,10 +5,17 @@
 s32_enrich_30m_intraday.py — Build per-ticker 30-minute context with daily + macro overlays (project-aware)
 
 Purpose
-- Create cached intraday features used near entry time (e.g., EMA275, distance_to_EMA275, intraday ATR, HH/LL windows).
+- Create cached intraday features used near entry time (e.g., EMA340 (20d), distance_to_EMA20d, intraday ATR, HH/LL windows).
 - Attach SAME-DAY DAILY context (from s30/s31) to each 30m bar (repeated across bars of that day by design).
   * ETF daily (prices_enriched.parquet, *_d cols)
   * Macro/FX (macro_forex_enriched.parquet) — keep ALL features exactly like s67b.
+
+NEW (Gate-2 ready)
+- Compute EMA(5/20/44/340) + 5-bar slopes
+- Donchian_position(20)
+- Trend_alignment flag (fast>slow>base OR fast<slow<base)
+- Map daily overlays to Gate-2 names: RSI14 <- rsi14_d, ADX14 <- adx14_d
+- Volatility_ATR <- m30_atr14_norm
 
 Reads (auto-detected, in this priority)
 - P.DATA_RAW/30min
@@ -23,7 +30,7 @@ Writes
 - Catalog:                P.DATA_ENRICHED/30min/_catalog.json
 
 Conventions
-- Intraday columns: 'm30_*' (e.g., m30_close, m30_ema275, m30_dist_to_ema275_pct, m30_hh80, m30_ll80, m30_entry_hour).
+- Intraday columns: 'm30_*' (e.g., m30_close, m30_ema20d, m30_dist_to_ema20d_pct, m30_hh80, m30_ll80, m30_entry_hour).
 - Daily ETF overlays retain '_d' suffix (lowercase).
 - Macro overlays follow s67b naming: '{TICKER}_{feature}' (may or may not end with '_d').
 - Session masking & day boundaries use MARKET_TZ (default Europe/London).
@@ -62,7 +69,6 @@ def resolve_in_dir(bucket_arg: str | None) -> Path:
         return shared
 
     # 2) & 3) QuantShared flat layouts
-    # Try explicit P.QUANTSHARED if provided, else derive from project root
     qs = getattr(P, "QUANTSHARED", None)
     if not qs:
         qs = P.ROOT.parent / "QuantShared"
@@ -106,6 +112,18 @@ def _to_utc_series(s: pd.Series) -> pd.Series:
         return dt.dt.tz_localize("UTC")
     return dt.dt.tz_convert("UTC")
 
+def slope_pct(series: pd.Series, lookback: int = 5) -> pd.Series:
+    """Simple slope over lookback bars as % of series value."""
+    lookback = int(lookback)
+    base = series.shift(lookback).replace(0, np.nan)
+    return (series - series.shift(lookback)) / base
+
+def donch_pos(close: pd.Series, high: pd.Series, low: pd.Series, length: int = 20) -> pd.Series:
+    hh = high.rolling(length).max()
+    ll = low.rolling(length).min()
+    rng = (hh - ll).replace(0, np.nan)
+    return ((close - ll) / rng).clip(0, 1)
+
 # ---------- IO ----------
 def read_30m(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
@@ -132,7 +150,6 @@ def enrich_30m_only(df: pd.DataFrame, market_tz: str) -> pd.DataFrame:
     out = df.copy()
 
     # ---- configurable base length: default to 340 bars (20 days * 17 bars/day) ----
-    # You can override at run time:  M30_EMA_BARS=340 python s32_...
     base_len = int(os.environ.get("M30_EMA_BARS", "340"))
 
     # New, stable alias for "20 trading days on 30m"
@@ -140,7 +157,6 @@ def enrich_30m_only(df: pd.DataFrame, market_tz: str) -> pd.DataFrame:
     out["m30_dist_to_ema20d_pct"] = out["close"].div(out["m30_ema20d"]).sub(1.0)
 
     # ---- legacy compatibility (was hardcoded 275) ----
-    # Keep producing the old columns so nothing downstream breaks while you migrate.
     if "m30_ema275" not in out.columns:
         out["m30_ema275"] = out["m30_ema20d"]  # soft alias during transition
     if "m30_dist_to_ema275_pct" not in out.columns:
@@ -156,6 +172,30 @@ def enrich_30m_only(df: pd.DataFrame, market_tz: str) -> pd.DataFrame:
         ll = out["low"].rolling(w).min()
         out[f"m30_hh{w}_from_close_pct"] = hh.div(out["close"]).sub(1.0)
         out[f"m30_ll{w}_from_close_pct"] = out["close"].div(ll).sub(1.0).mul(-1.0)
+
+    # ----- Gate-2 essentials (intraday computed) -----
+    # EMAs
+    out["ema5"]   = ema(out["close"], 5)
+    out["ema20"]  = ema(out["close"], 20)
+    out["ema44"]  = ema(out["close"], 44)
+    out["ema340"] = ema(out["close"], base_len)
+
+    # Slopes (5-bar percent slope)
+    out["EMA5_slope"]   = slope_pct(out["ema5"],   5)
+    out["EMA20_slope"]  = slope_pct(out["ema20"],  5)
+    out["EMA44_slope"]  = slope_pct(out["ema44"],  5)
+    out["EMA340_slope"] = slope_pct(out["ema340"], 5)
+
+    # Donchian position (20)
+    out["Donchian_position"] = donch_pos(out["close"], out["high"], out["low"], 20)
+
+    # Trend alignment (either fully up or fully down alignment)
+    up_align   = (out["ema5"] > out["ema20"]) & (out["ema20"] > out["ema44"]) & (out["ema44"] > out["ema340"])
+    down_align = (out["ema5"] < out["ema20"]) & (out["ema20"] < out["ema44"]) & (out["ema44"] < out["ema340"])
+    out["Trend_alignment"] = (up_align | down_align).astype(float)
+
+    # Volatility proxy for Gate-2
+    out["Volatility_ATR"] = out.get("m30_atr14_norm", pd.Series(index=out.index, dtype=float))
 
     # Local time helpers
     local = out["datetime"].dt.tz_convert(market_tz)
@@ -271,7 +311,9 @@ def main():
 
     catalog = []
     for f in files:
+        import re
         t = f.name.replace("_30min_raw.csv","").replace("_30min.csv","")
+        t = re.sub(r"\s+\d+$", "", t)  # strip trailing " 2", " 3", etc.    
         try:
             df = read_30m(f)
             if df.empty:
@@ -304,24 +346,27 @@ def main():
             # Macro/FX daily (ALL columns) by local date
             try:
                 if not macro_ctx.empty:
-                    # make macro_ctx date_local same dtype as e (datetime64[ns])
                     macro_ctx = macro_ctx.copy()
                     macro_ctx["date_local"] = pd.to_datetime(macro_ctx["date_local"])
                     e = e.merge(macro_ctx, on="date_local", how="left")
             except Exception as ex:
                 print(f"[WARN] {t}: Macro daily merge skipped → {ex}")
 
-            # Macro/FX daily (ALL columns) by local date
-            try:
-                if not macro_ctx.empty:
-                    e = e.merge(macro_ctx, on="date_local", how="left")
-            except Exception as ex:
-                print(f"[WARN] {t}: Macro daily merge skipped → {ex}")
+            # ---- Map daily overlays to Gate-2 canonical names ----
+            if "RSI14" not in e.columns and "rsi14_d" in e.columns:
+                e["RSI14"] = e["rsi14_d"]
+            if "ADX14" not in e.columns and "adx14_d" in e.columns:
+                e["ADX14"] = e["adx14_d"]
+
+            # Volatility proxy for Gate-2 (already set in enrich_30m_only, but keep mapping here if needed)
+            if "Volatility_ATR" not in e.columns and "m30_atr14_norm" in e.columns:
+                e["Volatility_ATR"] = e["m30_atr14_norm"]
 
             # drop helper key after merges
             e = e.drop(columns=["date_local"])
 
             # write parquet
+            e["ticker"] = t
             p = outdir / f"{t}.parquet"
             e.to_parquet(p, index=False)
             catalog.append({"ticker":t, "rows":int(len(e)), "path":str(p)})

@@ -1,0 +1,19 @@
+{
+  "global": {
+    "RSI14": 0.20,
+    "ADX14": 0.15,
+    "EMA5_slope": 0.10,
+    "EMA20_slope": 0.15,
+    "EMA44_slope": 0.10,
+    "EMA340_slope": 0.10,
+    "Trend_alignment": 0.10,
+    "Donchian_position": 0.10,
+    "Volatility_ATR": 0.10
+  },
+  "overrides": {
+    "GDXJ": { "ADX14": 0.20, "RSI14": 0.15 },
+    "URNM": { "EMA5_slope": 0.15 },
+    "IUHC": { "EMA20_slope": 0.20 },
+    "ISUN": { "Donchian_position": 0.20 }
+  }
+}
