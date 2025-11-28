@@ -2,125 +2,154 @@
 # -*- coding: utf-8 -*-
 
 """
-s20_make_master_daily.py — Build a single master DAILY CSV from raw targeted ETFs (UTC)
+s20_make_master_daily.py — Build a master DAILY CSV from raw per-ticker CSVs
 
-- Read DAILY raw per-ticker CSVs from QuantShared/data_raw_ETF_US/daily (or EU, per common.paths).
-- Concatenate into a single master CSV for s30.
-- No macro/forex here (handled elsewhere).
+READS:
+  <input_base>/daily/{TICKER}_daily_raw.csv
+  - default input_base:
+      1) --input-base if provided
+      2) $SHARED_RAW_BASE
+      3) common.paths.P.SHARED_RAW_BASE
 
-Inputs
-- ETF list from P.ETF_LIST (sheet resolved via CLI/env/settings with sensible fallbacks).
-- Raw files:
-    data_raw_ETF_*/daily/{TICKER}_daily_raw.csv   (IBKR schema: date,open,high,low,close,volume,...)
+WRITES (master CSV):
+  <outbase>/etf_prices_daily_master.csv
+  - default outbase:
+      1) --outbase if provided
+      2) $DATA_RAW_SHARED or $SHARED_RAW_BASE
+      3) common.paths.P.SHARED_RAW_BASE
 
-Output
-- DATA_RAW/etf_prices_daily_master.csv
-  Columns: datetime,ticker,open,high,low,close,volume,source  (UTC)
+Universe:
+  --excel (or $ETF_LIST_XLSX, else P.ETF_LIST)
+  --sheet (or $ETF_SHEET, else default_etf_sheet())
 """
 
+from __future__ import annotations
+from pathlib import Path
 import os
-import sys
 import argparse
 import pandas as pd
-from pathlib import Path
 
-# --- project bootstrapping ---
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+from common.paths import P, default_etf_sheet
 
-from common.paths import P  # shared paths (handles QuantShared etc.)
 
-def _resolve_sheet(cli_sheet: str | None) -> str:
-    """
-    Resolve ETF sheet in order of priority:
-    1) CLI --sheet
-    2) ENV ETF_SHEET
-    3) common.settings.default_etf_sheet()
-    4) common.paths.default_etf_sheet()
-    5) 'signals'
-    """
-    if cli_sheet and cli_sheet.strip():
-        return cli_sheet.strip()
-    env_sheet = os.environ.get("ETF_SHEET", "").strip()
-    if env_sheet:
-        return env_sheet
-    # try settings
-    try:
-        from common.settings import default_etf_sheet as _def_sheet_settings  # type: ignore
-        return _def_sheet_settings()
-    except Exception:
-        pass
-    # try paths
-    try:
-        from common.paths import default_etf_sheet as _def_sheet_paths  # type: ignore
-        return _def_sheet_paths()
-    except Exception:
-        pass
-    return "signals"
+# ---------- helpers ----------
+def _env_path(key: str) -> str | None:
+    v = os.environ.get(key)
+    return v if v and str(v).strip() else None
 
-# --- where to READ daily raws from (QuantShared) ---
-# Default to US; override at runtime:  export SHARED_RAW_BASE="/Users/Finance/QuantShared/data_raw_ETF_EU"
-SHARED_BASE = Path(os.environ.get("SHARED_RAW_BASE", "/Users/Finance/QuantShared/data_raw_ETF_US"))
-DIR_TT_D = SHARED_BASE / "daily"  # <— READ here
+def _resolve_input_base(cli_val: str | None) -> Path:
+    if cli_val and cli_val.strip():
+        return Path(cli_val).expanduser().resolve()
+    if _env_path("SHARED_RAW_BASE"):
+        return Path(_env_path("SHARED_RAW_BASE")).expanduser().resolve()
+    return Path(P.SHARED_RAW_BASE).expanduser().resolve()
 
-# --- where to WRITE the master (keep inside the project) ---
-OUT_FILE = P.DATA_RAW / "etf_prices_daily_master.csv"
+def _resolve_out_base(cli_val: str | None) -> Path:
+    if cli_val and cli_val.strip():
+        return Path(cli_val).expanduser().resolve()
+    # prefer project-scoped DATA_RAW_SHARED if provided
+    for k in ("DATA_RAW_SHARED", "SHARED_RAW_BASE"):
+        v = _env_path(k)
+        if v:
+            return Path(v).expanduser().resolve()
+    return Path(P.SHARED_RAW_BASE).expanduser().resolve()
 
-def _banner(sheet: str):
-    print(f"[s20] ROOT={P.ROOT}")
-    print(f"[s20] DATA_RAW(project)={P.DATA_RAW}")
-    print(f"[s20] SHARED_BASE={SHARED_BASE}")
-    print(f"[s20] TT daily dir (read)={DIR_TT_D}")
-    print(f"[s20] ETF list={P.ETF_LIST} (sheet={sheet})")
+def _resolve_excel(cli_val: str | None) -> Path:
+    if cli_val and cli_val.strip():
+        return Path(cli_val).expanduser().resolve()
+    if _env_path("ETF_LIST_XLSX"):
+        return Path(_env_path("ETF_LIST_XLSX")).expanduser().resolve()
+    return Path(P.ETF_LIST).expanduser().resolve()
 
-def read_tickers(xlsx: Path, sheet: str, col: str = "Ticker") -> list[str]:
+def _resolve_sheet(cli_val: str | None) -> str:
+    if cli_val and cli_val.strip():
+        return cli_val.strip()
+    if _env_path("ETF_SHEET"):
+        return _env_path("ETF_SHEET").strip()
+    return default_etf_sheet()
+
+def _banner(input_base: Path, out_base: Path, daily_dir: Path, excel: Path, sheet: str):
+    print(f"[s20] INPUT_BASE         : {input_base}")
+    print(f"[s20] INPUT daily dir    : {daily_dir}")
+    print(f"[s20] OUT_BASE (master)  : {out_base}")
+    print(f"[s20] ETF list           : {excel} (sheet={sheet})")
+    print(f"[s20] P.SHARED_RAW_BASE  : {P.SHARED_RAW_BASE}")
+    print(f"[s20] P.DATA_ENRICHED    : {P.DATA_ENRICHED}")
+
+def _read_tickers(xlsx: Path, sheet: str, prefer_col: str | None = None) -> list[str]:
     df = pd.read_excel(xlsx, sheet_name=sheet)
-    colmap = {c.lower(): c for c in df.columns}
-    key = col.lower()
-    if key not in colmap:
-        raise ValueError(f"Column '{col}' not found in {xlsx} (sheet '{sheet}').")
-    vals = df[colmap[key]].astype(str).str.strip().str.upper().tolist()
-    return sorted({v for v in vals if v})
+    cols = {c.strip().lower(): c for c in df.columns}
+    if prefer_col and prefer_col.lower() in cols:
+        chosen = cols[prefer_col.lower()]
+    else:
+        chosen = None
+        for key in ("ticker", "symbol", "etf"):
+            if key in cols:
+                chosen = cols[key]; break
+        if chosen is None:
+            chosen = df.columns[0]
+    s = df[chosen].astype(str).str.strip().str.upper()
+    return [t for t in s.unique().tolist() if t and t not in {"NAN", "NONE"}]
 
-def load_ibkr_daily(path: Path, ticker: str) -> pd.DataFrame:
-    """IBKR daily schema: date,open,high,low,close,volume,..."""
+def _load_ibkr_daily(path: Path, ticker: str) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame()
     df = pd.read_csv(path)
     if "date" not in df.columns or "close" not in df.columns:
         return pd.DataFrame()
     df["date"] = pd.to_datetime(df["date"], utc=True, errors="coerce")
-    for c in ["open","high","low","close","volume"]:
-        df[c] = pd.to_numeric(df.get(c), errors="coerce")
-    out = df.rename(columns={"date": "datetime"})[["datetime","open","high","low","close","volume"]]
+    for c in ("open", "high", "low", "close", "volume"):
+        if c not in df.columns:
+            df[c] = pd.NA
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    out = df.rename(columns={"date": "datetime"})[
+        ["datetime", "open", "high", "low", "close", "volume"]
+    ].copy()
     out["ticker"] = ticker
     out["source"] = "ibkr_daily_raw"
     return out
 
+
+# ---------- main ----------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sheet", default="", help="Override ETF sheet (e.g., signalsUSD). Else: env/settings/fallback.")
+    ap.add_argument("--excel", default="", help="Path to ETF_list.xlsx (default: env or P.ETF_LIST)")
+    ap.add_argument("--sheet", default="", help="Excel sheet for universe (default: env or project heuristic)")
+    ap.add_argument("--col", default="", help="Preferred ticker column (Ticker/Symbol/ETF). Optional.")
+    ap.add_argument("--input-base", dest="input_base", default=None,
+                    help="Root containing daily/ and 30min/ (default: env SHARED_RAW_BASE or P.SHARED_RAW_BASE)")
+    ap.add_argument("--input_base", dest="input_base_alt", default=None, help=argparse.SUPPRESS)  # legacy spelling
+    ap.add_argument("--outbase", dest="out_base", default=None,
+                    help="Where to write master CSV (default: DATA_RAW_SHARED or SHARED_RAW_BASE or P.SHARED_RAW_BASE)")
     args = ap.parse_args()
 
+    # normalize legacy alias
+    if getattr(args, "input_base_alt", None) and not args.input_base:
+        args.input_base = args.input_base_alt
+
+    excel = _resolve_excel(args.excel)
     sheet = _resolve_sheet(args.sheet)
-    _banner(sheet)
+    input_base = _resolve_input_base(args.input_base)
+    out_base   = _resolve_out_base(args.out_base)
+    daily_dir  = input_base / "daily"
 
-    if not DIR_TT_D.exists():
-        raise SystemExit(f"[ERR] Daily input folder not found: {DIR_TT_D}")
+    _banner(input_base, out_base, daily_dir, excel, sheet)
 
-    tickers = read_tickers(P.ETF_LIST, sheet, "Ticker")
+    if not excel.exists():
+        raise SystemExit(f"[ERR] ETF list not found: {excel}")
+    if not daily_dir.exists():
+        raise SystemExit(f"[ERR] Daily input folder not found: {daily_dir}")
+
+    tickers = _read_tickers(excel, sheet, args.col or None)
     if not tickers:
-        raise SystemExit(f"[ERR] No tickers read from {P.ETF_LIST} (sheet {sheet}).")
+        raise SystemExit(f"[ERR] No tickers read from {excel} (sheet {sheet}).")
 
     rows, missing = [], []
     for t in tickers:
-        f = DIR_TT_D / f"{t}_daily_raw.csv"
-        df = load_ibkr_daily(f, t)
+        f = daily_dir / f"{t}_daily_raw.csv"
+        df = _load_ibkr_daily(f, t)
         if df.empty:
-            missing.append(t)
-            continue
+            missing.append(t); continue
         rows.append(df)
 
     if missing:
@@ -129,19 +158,21 @@ def main():
     if not rows:
         raise SystemExit("[ERR] No daily inputs found for any ticker.")
 
-    master = pd.concat(rows, axis=0, ignore_index=True)
-    master = master.dropna(subset=["datetime","close"])
+    master = pd.concat(rows, ignore_index=True)
+    master = master.dropna(subset=["datetime", "close"]).copy()
     master["datetime"] = pd.to_datetime(master["datetime"], utc=True)
-    for c in ["open","high","low","close","volume"]:
+    for c in ("open", "high", "low", "close", "volume"):
         master[c] = pd.to_numeric(master[c], errors="coerce")
-    master = (master
-              .sort_values(["ticker","datetime"])
-              .drop_duplicates(subset=["ticker","datetime"]))
-    master = master[["datetime","ticker","open","high","low","close","volume","source"]]
 
-    OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    master.to_csv(OUT_FILE, index=False)
-    print(f"[OK] Wrote {OUT_FILE} | rows={len(master):,} | tickers={master['ticker'].nunique()}")
+    master = (master
+              .sort_values(["ticker", "datetime"])
+              .drop_duplicates(subset=["ticker", "datetime"]))[
+              ["datetime", "ticker", "open", "high", "low", "close", "volume", "source"]]
+
+    out_file = (out_base / "etf_prices_daily_master.csv").expanduser().resolve()
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    master.to_csv(out_file, index=False)
+    print(f"[OK] Wrote {out_file} | rows={len(master):,} | tickers={master['ticker'].nunique()}")
 
 if __name__ == "__main__":
     main()

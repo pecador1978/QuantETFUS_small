@@ -11,7 +11,7 @@ Goal
 Inputs
 - Gate-2 per-bar scores (from s80):  data_enriched/gate2_confidence_30m.csv
   Required cols: datetime, ticker, confidence_score, RSI14, ADX14,
-                 EMA5_slope, EMA20_slope, EMA44_slope, EMA340_slope,
+                 EMA5_slope, EMA20_slope, EMA44_slope, EMA260_slope,
                  Donchian_position, Volatility_ATR, Trend_alignment
 - 30m enriched parquets (from s32) for price: data_enriched/30min/*.parquet
   Required cols: datetime, ticker (added by s32), close
@@ -62,7 +62,7 @@ DEFAULT_OOS_PRED_CSV = PROJECT_ROOT / "data_enriched" / "gate2_model_predictions
 FEATURES = [
     "confidence_score",
     "RSI14", "ADX14",
-    "EMA5_slope","EMA20_slope","EMA44_slope","EMA340_slope",
+    "EMA5_slope","EMA20_slope","EMA44_slope","EMA260_slope",
     "Donchian_position","Volatility_ATR","Trend_alignment",
 ]
 

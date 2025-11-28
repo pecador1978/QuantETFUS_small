@@ -149,8 +149,8 @@ def main():
     ap.add_argument("--out-prefix", type=str, default=None, help="Custom output filename prefix.")
     args = ap.parse_args()
 
-    ds_dir = P.ROOT / "signals" / "boards_ds"
-    out_dir = P.ROOT / "signals" / "reports"
+    ds_dir = P.SIGNALS_DIR / "boards_ds"
+    out_dir = P.SIGNALS_DIR / "reports"
     out_dir.mkdir(parents=True, exist_ok=True)
     ts = _ts()
     prefix = args.out_prefix or f"blockers_{ts}"

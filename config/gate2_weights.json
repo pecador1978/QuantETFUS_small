@@ -5,7 +5,7 @@
     "EMA5_slope": 0.10,
     "EMA20_slope": 0.15,
     "EMA44_slope": 0.10,
-    "EMA340_slope": 0.10,
+    "EMA260_slope": 0.10,
     "Trend_alignment": 0.10,
     "Donchian_position": 0.10,
     "Volatility_ATR": 0.10

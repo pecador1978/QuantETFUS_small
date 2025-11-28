@@ -5,29 +5,24 @@
 s40_30m_build_bt_inputs.py
 From raw 30m CSVs → per-ticker *_bt_30m.csv used by s50_30m backtests.
 
-Changes in this version
------------------------
-- EMA "base" length is configurable (default 340 = ~20 trading days on 30m).
-- Logic uses ema_base for the trend filter; legacy column ema275 is still written
-  for backward compatibility (as an alias of ema_base).
-- Adds explicit aliases: ema_base, ema20d (same value as ema_base).
+- EMA base length configurable (default 260 ≈ ~20 trading days on 30m)
+- Uses ema_base for trend; still writes ema260 as alias for backward-compat
+- Writes to project-scoped backtest folder: P.BACKTEST_DATA/30min
 
 Reads
 -----
-- P.DATA_RAW/30min/{TICKER}_30min_raw.csv | {TICKER}_30min.csv
+- <shared>/30min/{TICKER}_30min_raw.csv | {TICKER}_30min.csv
 
 Writes
 ------
-- P.ROOT/backtest_data/30min/{TICKER}_bt_30m.csv
+- P.BACKTEST_DATA/30min/{TICKER}_bt_30m.csv
   Columns:
     datetime,ticker,open,high,low,close,
-    ema5,ema20,ema44,ema_base,ema20d,ema275,entry_signal
+    ema5,ema20,ema44,ema_base,ema20d,ema260,entry_signal
 """
 
 from pathlib import Path
-import sys
-import os
-import argparse
+import sys, os, argparse
 import pandas as pd
 
 # ---- import centralized paths ----
@@ -41,40 +36,39 @@ pd.set_option("future.no_silent_downcasting", True)
 
 # ---------------- CLI / input dir resolution ----------------
 def resolve_in_dir(bucket_arg: str | None) -> Path:
+    """
+    Preferred order:
+      1) $SHARED_RAW_BASE/30min (if env provided)
+      2) P.SHARED_30M_DIR
+      3) P.SHARED_RAW_BASE/30min
+      4) (legacy) P.DATA_RAW/<bucket>/30min if explicitly requested
+    """
     env_shared = os.environ.get("SHARED_RAW_BASE", "").strip()
     if env_shared:
-        cand = Path(env_shared) / "30min"
+        cand = Path(env_shared).expanduser().resolve() / "30min"
         if cand.exists():
             return cand
 
-    shared = P.DATA_RAW / "30min"
-    if shared.exists():
-        return shared
+    # Primary project-scoped shared
+    if hasattr(P, "SHARED_30M_DIR") and Path(P.SHARED_30M_DIR).exists():
+        return Path(P.SHARED_30M_DIR)
 
-    qs = getattr(P, "QUANTSHARED", None) or (P.ROOT.parent / "QuantShared")
-    cand_us = qs / "data_raw_ETF_US" / "30min"
-    cand_eu = qs / "data_raw_ETF"    / "30min"
-    if cand_us.exists():
-        return cand_us
-    if cand_eu.exists():
-        return cand_eu
+    # Fallback to shared raw base
+    if hasattr(P, "SHARED_RAW_BASE"):
+        cand = Path(P.SHARED_RAW_BASE).expanduser().resolve() / "30min"
+        if cand.exists():
+            return cand
 
-    bucket = (
-        (bucket_arg or "").strip()
-        or os.environ.get("TARGET_BUCKET", "").strip()
-        or next((b for b in ("targeted_ETFs_US", "targeted_ETFs")
-                 if (P.DATA_RAW / b / "30min").exists()), "")
-    )
-    if bucket:
-        return P.DATA_RAW / bucket / "30min"
+    # Optional bucket under project-local data_raw (legacy)
+    if bucket_arg:
+        cand = Path(P.DATA_RAW) / bucket_arg.strip() / "30min"
+        if cand.exists():
+            return cand
 
     raise SystemExit(
         "[ERR] Could not find 30min input folder.\n"
-        f"  Tried project: {shared}\n"
-        f"  Tried shared US: {cand_us}\n"
-        f"  Tried shared EU: {cand_eu}\n"
-        f"  And bucketed fallbacks under {P.DATA_RAW}/<bucket>/30min\n"
-        "  (Tip: export SHARED_RAW_BASE=/Users/Finance/QuantShared/data_raw_ETF_US)"
+        f"  Tried: $SHARED_RAW_BASE/30min, P.SHARED_30M_DIR, P.SHARED_RAW_BASE/30min\n"
+        f"  (Tip: export SHARED_RAW_BASE='{P.SHARED_RAW_BASE}' )"
     )
 
 # ---------------- loaders & helpers ----------------
@@ -118,26 +112,24 @@ def make_entry_signal(g: pd.DataFrame) -> pd.Series:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bucket", type=str, default=None,
-                    help="Fallback bucket under data_raw/ if shared layout isn't found.")
-    ap.add_argument("--ema-base-bars", type=int,
-                    default=int(os.environ.get("M30_EMA_BARS", "340")),
-                    help="EMA base length in 30m bars (default 340 ≈ 20 trading days).")
+                    help="Legacy fallback under project-local data_raw/<bucket>/30min (optional).")
+    ap.add_argument("--ema-base-bars", type=int, default=260,
+                help="30m EMA base length in bars (default 260 → 20 trading days on 6.5h).")
     args = ap.parse_args()
 
     IN_DIR = resolve_in_dir(args.bucket)
-    OUT_DIR = P.ROOT / "backtest_data" / "30min"
+    OUT_DIR = Path(P.BACKTEST_DATA) / "30min"   # project-scoped backtest path
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     files = sorted(list(IN_DIR.glob("*_30min_raw.csv")) + list(IN_DIR.glob("*_30min.csv")))
     if not files:
         raise SystemExit(f"[ERR] No input files in {IN_DIR}")
 
-    print(f"[INFO] Input dir: {IN_DIR}")
+    print(f"[INFO] Input dir:  {IN_DIR}")
     print(f"[INFO] Output dir: {OUT_DIR}")
-    print(f"[INFO] Using EMA base length (30m bars): {args.ema_base_bars}")
+    print(f"[INFO] EMA base (30m bars): {args.ema_base_bars}")
 
-    count = 0
-    errors = 0
+    count, errors = 0, 0
 
     for f in files:
         try:
@@ -145,21 +137,19 @@ def main():
             df = load_csv(f)
 
             # EMAs
-            df["ema5"]    = ema(df["close"], 5)
-            df["ema20"]   = ema(df["close"], 20)
-            df["ema44"]   = ema(df["close"], 44)
-            df["ema_base"] = ema(df["close"], int(args.ema_base_bars))
-            df["ema20d"]   = df["ema_base"]            # explicit alias = "20 trading days on 30m"
+            df["ema5"]      = ema(df["close"], 5)
+            df["ema20"]     = ema(df["close"], 20)
+            df["ema44"]     = ema(df["close"], 44)
+            df["ema_base"]  = ema(df["close"], int(args.ema_base_bars))
+            df["ema20d"]    = df["ema_base"]     # explicit alias = "20 trading days on 30m"
+            df["ema260"]    = df["ema_base"]     # legacy compatibility
 
-            # Legacy compatibility: keep writing ema275 (alias to base)
-            df["ema275"]  = df["ema_base"]
-
-            # Entry signal (uses ema_base)
+            # Entry signal
             df["entry_signal"] = make_entry_signal(df).astype(bool)
 
             # Output
             out = df[["datetime","open","high","low","close",
-                      "ema5","ema20","ema44","ema_base","ema20d","ema275"]].copy()
+                      "ema5","ema20","ema44","ema_base","ema20d","ema260"]].copy()
             out.insert(1, "ticker", tkr)
             out["entry_signal"] = df["entry_signal"]
 

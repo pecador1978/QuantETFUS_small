@@ -126,6 +126,17 @@ def _collect_events_and_measures(dlast: pd.DataFrame) -> dict:
     dlast["d_ema44_shift1"] = dlast["d_ema44"].shift(1)
     dlast["sl20"] = (dlast["d_ema20"] / dlast["d_ema20_shift1"] - 1.0)
     dlast["sl44"] = (dlast["d_ema44"] / dlast["d_ema44_shift1"] - 1.0)
+    # add daily slopes (no look-ahead)
+    dlast = dlast.copy()
+    dlast["d_ema20_shift1"] = dlast["d_ema20"].shift(1)
+    dlast["d_ema44_shift1"] = dlast["d_ema44"].shift(1)
+
+    # avoid division by zero/NaN explosions
+    dlast.loc[dlast["d_ema20_shift1"] == 0, "d_ema20_shift1"] = np.nan
+    dlast.loc[dlast["d_ema44_shift1"] == 0, "d_ema44_shift1"] = np.nan
+
+    dlast["sl20"] = (dlast["d_ema20"] / dlast["d_ema20_shift1"] - 1.0)
+    dlast["sl44"] = (dlast["d_ema44"] / dlast["d_ema44_shift1"] - 1.0)
 
     # long regime condition per completed day
     cond = (
@@ -250,7 +261,7 @@ def _aggregate_one_ticker(tkr: str, dlast: pd.DataFrame) -> dict:
 
 def main():
     market_tz = os.environ.get("MARKET_TZ", "Europe/London")
-    out_dir = P.ROOT / "signals" / "prob_models"
+    out_dir = P.SIGNALS_DIR / "prob_models"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "stretch_stats.parquet"
 
@@ -276,8 +287,13 @@ def main():
         raise SystemExit("[ERR] No stats produced.")
 
     X = pd.DataFrame(rows)
+
+    # Ensure date-like columns are proper datetimes (fastparquet hates object dtypes)
     if 'window_start' in X.columns:
         X['window_start'] = pd.to_datetime(X['window_start'], errors='coerce')
+    if 'window_end' in X.columns:
+        X['window_end'] = pd.to_datetime(X['window_end'], errors='coerce')
+
     X.to_parquet(out_path, index=False)
     print(f"[OK] Stretch & short-horizon stats → {out_path}  (rows={len(X)})")
     csv_path = out_path.with_suffix(".csv")

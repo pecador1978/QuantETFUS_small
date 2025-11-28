@@ -40,7 +40,7 @@ from common.paths import P
 
 def main():
     # Input
-    in_path = P.ROOT / "signals" / "analytics" / "gate15_stats.parquet"
+    in_path = P.SIGNALS_DIR / "analytics" / "gate15_stats.parquet"
     if not in_path.exists():
         raise SystemExit(f"[ERR] Missing input: {in_path}")
 
@@ -78,7 +78,7 @@ def main():
             agg[c] = np.nan
 
     # Outputs
-    out_dir = P.ROOT / "signals" / "analytics"
+    out_dir = P.SIGNALS_DIR / "analytics"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_parquet = out_dir / "gate15_stats_agg.parquet"
     out_csv = out_dir / "gate15_stats_agg.csv"

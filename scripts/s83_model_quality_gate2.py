@@ -19,11 +19,15 @@ import argparse
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import os
 
-# -------- Defaults --------
-PROJECT_ROOT = Path("/Users/Finance/QuantETFUS_small")
-DEFAULT_INPUT = PROJECT_ROOT / "reports" / "gate2_per_ticker_metrics.csv"
-DEFAULT_OUTPUT = PROJECT_ROOT / "config" / "gate2_ticker_quality.json"
+# --- Project root resolution ---
+SCRIPT_DIR    = Path(__file__).resolve().parent
+DEFAULT_ROOT  = SCRIPT_DIR.parents[1]
+PROJECT_ROOT  = Path(os.environ.get("PROJECT_ROOT", DEFAULT_ROOT))
+
+DEFAULT_INPUT  = PROJECT_ROOT / "reports" / "gate2_per_ticker_metrics.csv"
+DEFAULT_OUTPUT = PROJECT_ROOT / "config"  / "gate2_ticker_quality.json"
 
 # -------- Helpers --------
 def _pick_col(df: pd.DataFrame, candidates: list[str], name: str) -> str:

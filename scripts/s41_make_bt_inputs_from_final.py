@@ -28,7 +28,8 @@ if str(PROJECT_ROOT) not in sys.path:
 from common.paths import P  # noqa: E402
 
 DEFAULT_PARQUET = P.DATA_ENRICHED / "prices_enriched.parquet"
-DEFAULT_OUTDIR  = P.ROOT / "backtest_data" / "daily"
+# BEFORE: DEFAULT_OUTDIR  = P.ROOT / "backtest_data" / "daily"
+DEFAULT_OUTDIR  = Path(P.BACKTEST_DATA) / "daily"   # project-scoped backtest area
 
 REQUIRED_BASE = ["datetime","ticker","open","high","low","close"]
 EMA_NO_SUFFIX = ["ema5","ema20","ema44"]

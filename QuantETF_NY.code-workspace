@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.osx": {
+			"PYTHONPATH": "${workspaceFolder}:/Users/Finance/QuantShared",
+			"PROJECT_ROOT": "${workspaceFolder}"
+		}
+	}
+}

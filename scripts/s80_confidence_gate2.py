@@ -24,19 +24,22 @@ from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
 
-# -------- Defaults --------
-PROJECT_ROOT   = Path("/Users/Finance/QuantETFUS_small")
-DEFAULT_INPUT  = PROJECT_ROOT / "data_enriched" / "30min"
-DEFAULT_GLOB   = "*.parquet"
-DEFAULT_OUTPUT = PROJECT_ROOT / "data_enriched" / "gate2_confidence_30m.csv"
-DEFAULT_WEIGHTS= PROJECT_ROOT / "config" / "gate2_weights.json"
-DEFAULT_NORMS  = PROJECT_ROOT / "config" / "gate2_norm_bounds.json"
+# --- Project root resolution ---
+SCRIPT_DIR    = Path(__file__).resolve().parent
+DEFAULT_ROOT  = SCRIPT_DIR.parents[1]
+PROJECT_ROOT  = Path(os.environ.get("PROJECT_ROOT", DEFAULT_ROOT))
+
+DEFAULT_INPUT   = PROJECT_ROOT / "data_enriched" / "30min"
+DEFAULT_GLOB    = "*.parquet"
+DEFAULT_OUTPUT  = PROJECT_ROOT / "data_enriched" / "gate2_confidence_30m.csv"
+DEFAULT_WEIGHTS = PROJECT_ROOT / "config"        / "gate2_weights.json"
+DEFAULT_NORMS   = PROJECT_ROOT / "config"        / "gate2_norm_bounds.json"
 
 # Only keep these columns in the final CSV
 ESSENTIAL_COLS = [
     "datetime","ticker",
     "RSI14","ADX14",
-    "EMA5_slope","EMA20_slope","EMA44_slope","EMA340_slope",
+    "EMA5_slope","EMA20_slope","EMA44_slope","EMA260_slope",
     "Donchian_position","Volatility_ATR","Trend_alignment",
     "confidence_score"
 ]
@@ -67,7 +70,7 @@ def get_bounds(norms: dict, ticker: str, key: str) -> tuple[float, float]:
     defaults = {
         "RSI14": (30,70), "ADX14": (10,40),
         "EMA5_slope":(-0.002,0.002),"EMA20_slope":(-0.001,0.001),
-        "EMA44_slope":(-0.001,0.001),"EMA340_slope":(-0.001,0.001),
+        "EMA44_slope":(-0.001,0.001),"EMA260_slope":(-0.001,0.001),
         "Donchian_position":(0,1),"Volatility_ATR":(0,2),"Trend_alignment":(0,1)
     }
     return defaults.get(key,(0,1))
@@ -93,7 +96,7 @@ def compute_confidence(df: pd.DataFrame, ticker: str, weights: dict, norms: dict
     ema5    = nfeat("EMA5_slope", 0.0)
     ema20   = nfeat("EMA20_slope", 0.0)
     ema44   = nfeat("EMA44_slope", 0.0)
-    ema340  = nfeat("EMA340_slope", 0.0)
+    ema260  = nfeat("EMA260_slope", 0.0)
     donch   = nfeat("Donchian_position", 0.5)
     atr     = nfeat("Volatility_ATR", 1.0)
     trend   = col_or("Trend_alignment", 0.0)
@@ -107,7 +110,7 @@ def compute_confidence(df: pd.DataFrame, ticker: str, weights: dict, norms: dict
         w("EMA5_slope")          * ema5 +
         w("EMA20_slope")         * ema20 +
         w("EMA44_slope")         * ema44 +
-        w("EMA340_slope")        * ema340 +
+        w("EMA260_slope")        * ema260 +
         w("Donchian_position")   * donch +
         w("Volatility_ATR")      * atr +
         w("Trend_alignment")     * trend

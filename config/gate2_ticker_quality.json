@@ -1,174 +1,182 @@
 {
-  "URNM": {
-    "trust_score": 0.943,
+  "IBB": {
+    "trust_score": 0.985,
     "quality": "High"
   },
-  "SGLD": {
-    "trust_score": 0.952,
+  "XBI": {
+    "trust_score": 0.971,
     "quality": "High"
   },
-  "SBIO": {
-    "trust_score": 0.931,
+  "SLV": {
+    "trust_score": 0.924,
     "quality": "High"
   },
   "GDX": {
-    "trust_score": 0.871,
+    "trust_score": 0.911,
     "quality": "High"
   },
-  "NUCL": {
-    "trust_score": 0.752,
+  "XLV": {
+    "trust_score": 0.911,
     "quality": "High"
   },
-  "URNJ": {
-    "trust_score": 0.63,
-    "quality": "Medium"
-  },
-  "IUUS": {
-    "trust_score": 0.774,
+  "SILJ": {
+    "trust_score": 0.912,
     "quality": "High"
   },
-  "PHAG": {
-    "trust_score": 0.782,
+  "XRT": {
+    "trust_score": 0.886,
     "quality": "High"
   },
-  "GDXJ": {
-    "trust_score": 0.747,
+  "XLP": {
+    "trust_score": 0.854,
     "quality": "High"
   },
-  "DTLA": {
-    "trust_score": 0.762,
+  "XHB": {
+    "trust_score": 0.866,
     "quality": "High"
   },
-  "IUHC": {
-    "trust_score": 0.715,
+  "TLT": {
+    "trust_score": 0.861,
     "quality": "High"
   },
-  "USPY": {
-    "trust_score": 0.72,
+  "IGE": {
+    "trust_score": 0.832,
     "quality": "High"
   },
-  "IUCS": {
-    "trust_score": 0.647,
-    "quality": "Medium"
+  "LIT": {
+    "trust_score": 0.823,
+    "quality": "High"
   },
-  "SILV": {
-    "trust_score": 0.437,
-    "quality": "Medium"
+  "IYT": {
+    "trust_score": 0.795,
+    "quality": "High"
   },
-  "COPA": {
-    "trust_score": 0.656,
-    "quality": "Medium"
+  "SPY": {
+    "trust_score": 0.685,
+    "quality": "High"
   },
-  "IOGP": {
-    "trust_score": 0.61,
-    "quality": "Medium"
+  "COPX": {
+    "trust_score": 0.787,
+    "quality": "High"
   },
-  "IUIT": {
-    "trust_score": 0.635,
-    "quality": "Medium"
+  "OIH": {
+    "trust_score": 0.807,
+    "quality": "High"
   },
-  "IUCM": {
-    "trust_score": 0.574,
-    "quality": "Medium"
+  "GLD": {
+    "trust_score": 0.768,
+    "quality": "High"
   },
-  "COMF": {
-    "trust_score": 0.547,
-    "quality": "Medium"
+  "IYR": {
+    "trust_score": 0.733,
+    "quality": "High"
   },
-  "R2US": {
-    "trust_score": 0.552,
-    "quality": "Medium"
+  "XME": {
+    "trust_score": 0.754,
+    "quality": "High"
   },
-  "IBTA": {
-    "trust_score": 0.57,
+  "PHO": {
+    "trust_score": 0.664,
+    "quality": "High"
+  },
+  "XLF": {
+    "trust_score": 0.676,
+    "quality": "High"
+  },
+  "PBW": {
+    "trust_score": 0.721,
+    "quality": "High"
+  },
+  "BLOK": {
+    "trust_score": 0.697,
+    "quality": "High"
+  },
+  "ARKQ": {
+    "trust_score": 0.607,
     "quality": "Medium"
   },
   "SMH": {
-    "trust_score": 0.503,
+    "trust_score": 0.592,
     "quality": "Medium"
   },
-  "IDTM": {
-    "trust_score": 0.482,
+  "XOP": {
+    "trust_score": 0.691,
+    "quality": "High"
+  },
+  "XLC": {
+    "trust_score": 0.59,
     "quality": "Medium"
   },
-  "ICOM": {
-    "trust_score": 0.512,
+  "KRE": {
+    "trust_score": 0.668,
+    "quality": "High"
+  },
+  "HAIL": {
+    "trust_score": 0.638,
     "quality": "Medium"
   },
-  "XNAS": {
-    "trust_score": 0.478,
+  "XLU": {
+    "trust_score": 0.596,
     "quality": "Medium"
   },
-  "IUFS": {
-    "trust_score": 0.486,
+  "ARKW": {
+    "trust_score": 0.543,
     "quality": "Medium"
   },
-  "IUES": {
-    "trust_score": 0.362,
+  "TAN": {
+    "trust_score": 0.655,
     "quality": "Medium"
   },
-  "AIAI": {
-    "trust_score": 0.359,
+  "XLY": {
+    "trust_score": 0.542,
     "quality": "Medium"
   },
-  "DGTL": {
-    "trust_score": 0.335,
+  "BOTZ": {
+    "trust_score": 0.529,
     "quality": "Medium"
   },
-  "AIGA": {
-    "trust_score": 0.373,
+  "URA": {
+    "trust_score": 0.665,
+    "quality": "High"
+  },
+  "QQQ": {
+    "trust_score": 0.47,
     "quality": "Medium"
   },
-  "AIGI": {
-    "trust_score": 0.382,
+  "XLE": {
+    "trust_score": 0.618,
     "quality": "Medium"
   },
-  "CSPX": {
-    "trust_score": 0.379,
+  "KRBN": {
+    "trust_score": 0.607,
     "quality": "Medium"
   },
-  "COPX": {
-    "trust_score": 0.239,
-    "quality": "Low"
+  "XLK": {
+    "trust_score": 0.445,
+    "quality": "Medium"
   },
-  "RENW": {
-    "trust_score": 0.221,
-    "quality": "Low"
+  "XLI": {
+    "trust_score": 0.484,
+    "quality": "Medium"
   },
-  "VUAA": {
-    "trust_score": 0.228,
-    "quality": "Low"
+  "IYZ": {
+    "trust_score": 0.472,
+    "quality": "Medium"
   },
-  "BATT": {
-    "trust_score": 0.218,
-    "quality": "Low"
+  "MJ": {
+    "trust_score": 0.651,
+    "quality": "Medium"
   },
-  "XSPD": {
-    "trust_score": 0.2,
-    "quality": "Low"
+  "ITA": {
+    "trust_score": 0.463,
+    "quality": "Medium"
   },
-  "XT2D": {
-    "trust_score": 0.199,
-    "quality": "Low"
+  "IBIT": {
+    "trust_score": 0.554,
+    "quality": "Medium"
   },
-  "IWDA": {
-    "trust_score": 0.194,
-    "quality": "Low"
-  },
-  "RBOT": {
-    "trust_score": 0.128,
-    "quality": "Low"
-  },
-  "XS2D": {
-    "trust_score": 0.18,
-    "quality": "Low"
-  },
-  "ISAC": {
-    "trust_score": 0.11,
-    "quality": "Low"
-  },
-  "XMED": {
-    "trust_score": 0.09,
+  "HACK": {
+    "trust_score": 0.259,
     "quality": "Low"
   }
 }

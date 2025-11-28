@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-s50_30m_backtest_engine.py — clone-friendly, NO Vermeulen, T1/T2 only (fixed 50/50)
+s50_30m_backtest_engine.py — LSE-ready (no Vermeulen), T1/T2 only (fixed 50/50)
 
 Adds parametric filters:
 - streak_mode: none | prev1 | 1of2 | 2of2
@@ -27,7 +27,7 @@ if str(PROJECT_ROOT) not in sys.path:
 # ---------- project-aware paths ----------
 from common.paths import P  # type: ignore
 
-# ---------- clone-friendly detection ----------
+# ---------- bucket & session resolution ----------
 def _resolve_bucket() -> str:
     env_b = os.environ.get("TARGET_BUCKET", "").strip()
     if env_b:
@@ -38,41 +38,64 @@ def _resolve_bucket() -> str:
             return str(SBUCKET)
     except Exception:
         pass
-    if (P.DATA_RAW / "targeted_ETFs_US" / "30min").exists() or (P.DATA_RAW / "targeted_ETFs_US" / "daily").exists():
+    # heuristic fallback
+    proj = PROJECT_ROOT.name.lower()
+    if "ny" in proj or "us" in proj:
         return "targeted_ETFs_US"
+    if "lse" in proj:
+        return "targeted_ETFs_LSE"
     return "targeted_ETFs"
 
 def _resolve_session(bucket: str) -> tuple[str, str, str]:
+    # 1) explicit env always wins
     tz = os.environ.get("MARKET_TZ", "").strip()
     op = os.environ.get("MARKET_OPEN", "").strip()
     cl = os.environ.get("MARKET_CLOSE", "").strip()
     if tz and op and cl:
         return tz, op, cl
+
+    # 2) repo settings if present
     try:
         from common.settings import MARKET_TZ as STZ, MARKET_OPEN as SOPEN, MARKET_CLOSE as SCLOSE  # type: ignore
         if all([STZ, SOPEN, SCLOSE]):
             return str(STZ), str(SOPEN), str(SCLOSE)
     except Exception:
         pass
-    repo_us = PROJECT_ROOT.name.endswith("US") or bucket == "targeted_ETFs_US"
-    if repo_us:
+
+    # 3) heuristic by project/bucket (LSE default)
+    name = PROJECT_ROOT.name.lower()
+    b = (bucket or "").lower()
+    if "lse" in name or "lse" in b:
         return "Europe/London", "08:00", "16:30"
-    return "Europe/Madrid", "09:00", "17:30"
+    # US fallback if repo/bucket hints at US
+    if "us" in name or "ny" in name or "us" in b or "ny" in b:
+        return "US/Eastern", "09:30", "16:00"
+
+    # final fallback → London session
+    return "Europe/London", "08:00", "16:30"
 
 def _resolve_inputs() -> tuple[Path, Path, str]:
-    shared_30 = P.DATA_RAW / "30min"
-    shared_1d = P.DATA_RAW / "daily"
+    # 1) Prefer project-scoped shared/iCloud paths
+    shared_30 = P.SHARED_30M_DIR
+    shared_1d = P.SHARED_DAILY_DIR
     if shared_30.exists() and shared_1d.exists():
-        return shared_30, shared_1d, "(shared)"
+        return shared_30, shared_1d, "(project-shared)"
 
-    # NEW: look in QuantShared flat layouts
-    qs = getattr(P, "QUANTSHARED", None) or (P.ROOT.parent / "QuantShared")
-    qs_30 = qs / "data_raw_ETF_US" / "30min"
-    qs_1d = qs / "data_raw_ETF_US" / "daily"
-    if qs_30.exists() and qs_1d.exists():
-        return qs_30, qs_1d, "(QuantShared US)"
+    # 2) Project-local (rare)
+    proj_30 = P.SHARED_30M_DIR
+    proj_1d = P.SHARED_DAILY_DIR
+    if proj_30.exists() and proj_1d.exists():
+        return proj_30, proj_1d, "(project-local)"
 
-    # fallback: bucket under project
+    # 3) Generic QuantShared fallback via project-aware base (no hardcoded LSE)
+    qs_base = getattr(P, "SHARED_RAW_BASE", None)
+    if qs_base and qs_base.exists():
+        qs_30 = qs_base / "30min"
+        qs_1d = qs_base / "daily"
+        if qs_30.exists() and qs_1d.exists():
+            return qs_30, qs_1d, "(shared-raw-base)"
+
+    # 4) Bucket under project
     bucket = _resolve_bucket()
     b30 = P.DATA_RAW / bucket / "30min"
     b1d = P.DATA_RAW / bucket / "daily"
@@ -81,9 +104,10 @@ def _resolve_inputs() -> tuple[Path, Path, str]:
 
     raise SystemExit(
         f"[ERR] Could not find inputs.\n"
-        f"  Tried shared: {shared_30} & {shared_1d}\n"
-        f"  Tried QuantShared US: {qs_30} & {qs_1d}\n"
-        f"  Tried bucket: {b30} & {b1d} (bucket='{bucket}')"
+        f"  Tried project-shared: {shared_30} & {shared_1d}\n"
+        f"  Tried project-local : {proj_30} & {proj_1d}\n"
+        f"  Tried QuantShared   : {qs_30} & {qs_1d}\n"
+        f"  Tried bucket        : {b30} & {b1d} (bucket='{bucket}')"
     )
 
 TARGET_BUCKET = _resolve_bucket()
@@ -147,12 +171,26 @@ def _load_daily_any(ticker: str) -> pd.DataFrame:
     return dfd.dropna(subset=["datetime","open","high","low","close"]).sort_values("datetime").reset_index(drop=True)
 
 def _atr_manual(dfd: pd.DataFrame, n: int = 14) -> pd.Series:
+    """
+    Wilder ATR (SMA-seeded RMA) identical to LSE.
+    TR = max(high-low, |high-prevClose|, |low-prevClose|)
+    ATR₀ = SMA(TR[0:n]); ATRₜ = (ATRₜ₋₁·(n-1) + TRₜ)/n
+    """
     d = dfd.copy()
-    d["H-L"]  = d["high"] - d["low"]
-    d["H-PC"] = (d["high"] - d["close"].shift()).abs()
-    d["L-PC"] = (d["low"] - d["close"].shift()).abs()
-    d["TR"]   = d[["H-L","H-PC","L-PC"]].max(axis=1)
-    return d["TR"].rolling(window=n).mean()
+    h, l, c = d["high"].astype(float), d["low"].astype(float), d["close"].astype(float)
+    pc = c.shift(1)
+    tr = pd.concat([(h - l).abs(), (h - pc).abs(), (l - pc).abs()], axis=1).max(axis=1)
+
+    seed = tr.rolling(n, min_periods=n).mean()
+    out = pd.Series(index=tr.index, dtype=float)
+    si = seed.first_valid_index()
+    if si is None:
+        return out.rename(f"atr{n}")
+    out.loc[si] = seed.loc[si]
+    alpha = 1.0 / n
+    for i in range(tr.index.get_loc(si) + 1, len(tr)):
+        out.iloc[i] = out.iloc[i - 1] * (1 - alpha) + tr.iloc[i] * alpha
+    return out.rename(f"atr{n}")
 
 def apply_costs(px: float, side: str, slip_bps: float) -> float:
     if pd.isna(px) or px <= 0:
@@ -180,7 +218,7 @@ def backtest_ticker(ticker: str, params: dict) -> pd.DataFrame:
     if not verbose:
         warnings.filterwarnings("ignore", category=FutureWarning)
 
-    # NEW: 30m EMA base length (bars)
+    # 30m EMA base length (bars)
     base_len = int(params.get("m30_ema_bars", 340))
 
     df30 = _load_30min_any(ticker)
@@ -224,7 +262,7 @@ def backtest_ticker(ticker: str, params: dict) -> pd.DataFrame:
 
     # === 30m enrich ===
     df30["EMA_BASE"] = EMAIndicator(df30["close"], window=base_len).ema_indicator()
-    df30["EMA275"]   = df30["EMA_BASE"]  # legacy alias for compatibility
+    df30["EMA260"]   = df30["EMA_BASE"]  # legacy alias for compatibility
     buffer = float(params.get("entry_buffer_pct", 0.0)) / 100.0
     df30["date"] = df30["datetime"].dt.tz_convert(MARKET_TZ).dt.date
 
@@ -236,7 +274,7 @@ def backtest_ticker(ticker: str, params: dict) -> pd.DataFrame:
     # ---------- STREAK MODES (none | prev1 | 1of2 | 2of2) ----------
     streak_mode = str(params.get("streak_mode", "2of2")).lower()
 
-    # last bar per day, relative to EMA275 (with buffer)
+    # last bar per day, relative to EMA260 (with buffer)
     lastbars = df30.sort_values("datetime").groupby("date", as_index=False).tail(1).copy()
     lastbars["day_close_above"] = lastbars["close"] > lastbars["EMA_BASE"] * (1.0 + buffer)
 
@@ -279,7 +317,7 @@ def backtest_ticker(ticker: str, params: dict) -> pd.DataFrame:
         # "tight" default: price > EMA20 AND price > EMA44 AND EMA44 not falling
         df30["daily_ok"] = (price_above_ema20 & price_above_ema44 & ema44_not_down).fillna(False)
 
-    # other filters (as before)
+    # other filters
     df30["ema_alignment_ok"] = (df30["ema5"] > df30["ema20"]) & (df30["ema20"] > df30["ema44"])
     df30["rsi_ok"] = df30["date"].isin(good_days)
 
@@ -514,10 +552,10 @@ def main():
     ap.add_argument("--slip_bps", type=float, default=0.0)
     ap.add_argument("--unit_capital", type=float, default=10000.0)
     ap.add_argument(
-    "--m30_ema_bars",
-    type=int,
-    default=int(os.environ.get("M30_EMA_BARS", "340")),
-    help="30m EMA base length in bars (default 340 ≈ 20 trading days).",
+        "--m30_ema_bars",
+        type=int,
+        default=int(os.environ.get("M30_EMA_BARS", "340")),
+        help="30m EMA base length in bars (default 260 ≈ 20 trading days).",
     )
     # Verbosity
     ap.add_argument("--verbose", action="store_true", default=False)

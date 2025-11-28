@@ -2,11 +2,11 @@
   "label": "gate1_v1.0",
   "timeframe": "30m",
 
-  "ema_base_len": 340,
+  "ema_base_len": 260,
 
-  "confirm_days_long": 0,
+  "confirm_days_long": 2,
   "confirm_days_short": 2,
-  "allow_today_open_as_confirm": true,
+  "allow_today_open_as_confirm": false,
 
   "use_ema_buffer": true,
   "buffer_pct": 0.001,
@@ -24,7 +24,7 @@
 
   "ema20_min_gap_pct": 0.3,
   "ema5_slope_min": -10.0,
-  "ema20_slope_min": 0.0003,
+  "ema20_slope_min": 0.0000,
   "ema_base_slope_min": 0.0,
 
   "use_adx": true,

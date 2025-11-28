@@ -17,46 +17,47 @@ s80a_prepare_confidence_snapshot.py — Summarize latest Gate-2 confidence per t
 
 from pathlib import Path
 import argparse
+import os
 import numpy as np
 import pandas as pd
 
-# -------- Defaults aligned with s80 --------
-PROJECT_ROOT   = Path("/Users/Finance/QuantETFUS_small")
-DEFAULT_INPUT_DIR  = PROJECT_ROOT / "data_enriched" / "30min"  # not used here, kept for symmetry
-DEFAULT_GLOB       = "*.parquet"                               # not used here, kept for symmetry
+# --- Project root resolution (aligns with s80) ---
+SCRIPT_DIR    = Path(__file__).resolve().parent
+DEFAULT_ROOT  = SCRIPT_DIR.parents[1]
+PROJECT_ROOT  = Path(os.environ.get("PROJECT_ROOT", DEFAULT_ROOT))
+
 DEFAULT_OUTPUT_S80 = PROJECT_ROOT / "data_enriched" / "gate2_confidence_30m.csv"
+
+# Optional, explicit fallback root (disabled by default)
+FALLBACK_ROOT = os.environ.get("GATE2_FALLBACK_ROOT", "")
+FALLBACK_ROOT = Path(FALLBACK_ROOT).expanduser() if FALLBACK_ROOT else None
 
 # QuantShared fallback root
 QUANTSHARED_ROOT = Path.home() / "Library/Mobile Documents/com~apple~CloudDocs" / "QuantShared"
 
 def find_input_csv(user_input: str | None) -> Path:
-    """Resolve input CSV path: --input > project default > QuantShared newest."""
     if user_input:
         p = Path(user_input).expanduser()
         if not p.exists():
             raise SystemExit(f"[ERR] --input not found: {p}")
         return p
 
-    # 1) Project default (s80 default output)
     if DEFAULT_OUTPUT_S80.exists():
         return DEFAULT_OUTPUT_S80
 
-    # 2) QuantShared fallback: newest matching file
-    candidates: list[Path] = []
-    qs_dir = QUANTSHARED_ROOT / "data_enriched"
-    if qs_dir.exists():
-        candidates += list(qs_dir.glob("gate2_confidence_30m*.csv"))
-        candidates += list(qs_dir.glob("gate2_confidence_30m*.csv.gz"))
+    if FALLBACK_ROOT:
+        candidates = list((FALLBACK_ROOT / "data_enriched").glob("gate2_confidence_30m*.csv")) + \
+                     list((FALLBACK_ROOT / "data_enriched").glob("gate2_confidence_30m*.csv.gz"))
+        if candidates:
+            candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+            return candidates[0]
 
-    if not candidates:
-        raise SystemExit(
-            "[ERR] No gate2_confidence_30m*.csv found.\n"
-            f"  Checked: {DEFAULT_OUTPUT_S80}\n"
-            f"  And: {qs_dir}\n"
-            "Tip: run s80_confidence_gate2.py first, or pass --input /full/path.csv"
-        )
-    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
-    return candidates[0]
+    raise SystemExit(
+        "[ERR] No gate2_confidence_30m*.csv found.\n"
+        f"  Checked: {DEFAULT_OUTPUT_S80}\n"
+        "Tip: run s80_confidence_gate2.py first, or pass --input /full/path.csv\n"
+        "      (or set GATE2_FALLBACK_ROOT to a specific shared directory)"
+    )
 
 def pct_rank(arr: np.ndarray, v: float) -> float:
     if arr.size == 0 or not np.isfinite(v):

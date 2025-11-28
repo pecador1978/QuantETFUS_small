@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-s00_data_integrity_enrichment.py (UTC-aware, robust, JSON-driven)
+s00_data_integrity_enrichment.py (UTC-aware, robust, JSON-driven) — NY project
 
 What it does
 ------------
@@ -11,9 +11,9 @@ What it does
 - Computes daily TA features from config/ta_features.json (with sane defaults)
 - Adds daily regime labels
 - Exports:
-    <ROOT>/data_clean/prices_clean.parquet
-    <ROOT>/data_enriched/prices_enriched.parquet
-    <ROOT>/reports/integrity_report_*.csv
+    <OUTBASE>/data_clean/prices_clean.parquet
+    <OUTBASE>/data_enriched/prices_enriched.parquet
+    <OUTBASE>/reports/integrity_report_*.csv
 
 Inputs (CSV columns, case-insensitive)
 --------------------------------------
@@ -59,9 +59,10 @@ CFG_PATH  = P.CONFIG_DIR / "ta_features.json"
 
 DEFAULT_CFG = {
     "EMA": [5, 20, 44, 100, 200],
-    "SMA": [20, 50, 150],
+    "SMA": [20, 50, 150, 200],
     "RSI": [14, 21],
-    "ATR": [14],
+    # IMPORTANT: compute both professional ATRs
+    "ATR": [14, 20],
     "ADX": [14],
     "Bollinger": [{"length": 20, "std": 2.0}, {"length": 50, "std": 2.5}],
     "MACD": [{"fast":12, "slow":26, "signal":9}],
@@ -94,9 +95,40 @@ def _true_range(h,l,c):
     return pd.concat([(h-l).abs(), (h-pc).abs(), (l-pc).abs()], axis=1).max(axis=1)
 
 def atr(df, length=14, h="high", l="low", c="close"):
-    length = int(length)
-    tr = _true_range(df[h], df[l], df[c])
-    return tr.ewm(alpha=1/length, adjust=False).mean()
+    """
+    Professional ATR (Wilder) with SMA-seeded RMA.
+    TR = max(high-low, |high-prevClose|, |low-prevClose|)
+    ATR_0 = SMA(TR[0:n]); ATR_t = (ATR_{t-1}*(n-1) + TR_t)/n
+    """
+    n = int(length)
+    hi = df[h].astype(float)
+    lo = df[l].astype(float)
+    cl = df[c].astype(float)
+    prev_close = cl.shift(1)
+
+    tr = pd.concat([
+        (hi - lo).abs(),
+        (hi - prev_close).abs(),
+        (lo - prev_close).abs()
+    ], axis=1).max(axis=1)
+
+    # Seed with SMA over the first n TR values
+    sma_seed = tr.rolling(n, min_periods=n).mean()
+    rma = pd.Series(index=tr.index, dtype=float)
+
+    seed_idx = sma_seed.first_valid_index()
+    if seed_idx is None:
+        return pd.Series(index=tr.index, dtype=float).rename(f"atr{n}_d")
+
+    # initialize at the first full window
+    rma.loc[seed_idx] = sma_seed.loc[seed_idx]
+    alpha = 1.0 / n
+
+    # Wilder recursion
+    for i in range(tr.index.get_loc(seed_idx) + 1, len(tr)):
+        rma.iloc[i] = rma.iloc[i-1] * (1 - alpha) + tr.iloc[i] * alpha
+
+    return rma.rename(f"atr{n}_d")
 
 def adx(df, length=14, h="high", l="low", c="close"):
     length = int(length)
@@ -199,6 +231,54 @@ def load_ta_config(path=CFG_PATH):
     except Exception:
         return DEFAULT_CFG
 
+# ---------- NEW: OUTBASE resolver ----------
+def resolve_outbase(cli_outbase: str) -> Path:
+    """
+    Choose where to write outputs:
+    1) --outbase if provided and non-empty
+    2) P.PROJECT_SHARED if set
+    3) P.ROOT
+    """
+    if cli_outbase and str(cli_outbase).strip():
+        return Path(cli_outbase).expanduser().resolve()
+    proj_shared = getattr(P, "PROJECT_SHARED", None)
+    if proj_shared:
+        return Path(proj_shared).expanduser().resolve()
+    return Path(getattr(P, "ROOT", PROJECT_ROOT)).expanduser().resolve()
+
+# ---------- NEW: adjusted overlay loader ----------
+def _load_adjusted_from_daily_raw(ticker: str, base_dir: Path | None = None) -> pd.DataFrame:
+    """
+    Return adjusted OHLC for this ticker from data_raw/daily/{TICKER}_daily_raw.csv
+    as ['date','open','high','low','close'] (ADJUSTED_LAST chain).
+    If a '__what' column exists, keep only ADJUSTED_LAST; otherwise assume file is adjusted.
+    """
+    base = base_dir or (getattr(P, "DATA_RAW", PROJECT_ROOT / "data_raw"))
+    csv_path = Path(base) / "daily" / f"{ticker}_daily_raw.csv"
+    if not csv_path.exists():
+        return pd.DataFrame(columns=["date","open","high","low","close"])
+
+    d = pd.read_csv(csv_path)
+    # normalize column names
+    if "Date" in d.columns and "date" not in d.columns:
+        d = d.rename(columns={"Date":"date"})
+    # keep only adjusted rows if tagged
+    if "__what" in d.columns:
+        mask = d["__what"].astype(str).str.upper().eq("ADJUSTED_LAST")
+        if mask.any():
+            d = d.loc[mask].copy()
+
+    need = ["date","open","high","low","close"]
+    have = {c.lower() for c in d.columns}
+    if not set(need).issubset(have):
+        return pd.DataFrame(columns=need)
+
+    d["date"] = pd.to_datetime(d["date"], utc=True, errors="coerce").dt.normalize()
+    for c in ["open","high","low","close"]:
+        d[c] = pd.to_numeric(d[c], errors="coerce")
+    d = d.dropna(subset=["date"]).sort_values("date")
+    return d[["date","open","high","low","close"]]
+
 # ---------- Main ----------
 def main():
     ap = argparse.ArgumentParser()
@@ -206,29 +286,28 @@ def main():
     ap.add_argument("--freq",    default="D")
     ap.add_argument("--tz",      default=_default_market_tz(), help="Market timezone (e.g., US/Eastern)")
     ap.add_argument("--rth",     default="", help='Optional RTH window like "09:30-16:00" in market TZ')
-    ap.add_argument("--outbase", default=str(P.ROOT))
+    ap.add_argument("--outbase", default=str(getattr(P, "ROOT", PROJECT_ROOT)))
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--debug_full", action="store_true", default=False)
     args = ap.parse_args()
 
     warnings.simplefilter("ignore", UserWarning)
 
-    # output dirs
-    out_clean_dir = Path(args.outbase) / "data_clean"
-    out_enr_dir   = Path(args.outbase) / "data_enriched"
-    out_rep_dir   = Path(args.outbase) / "reports"
+    OUTBASE = resolve_outbase(args.outbase)
+    out_clean_dir = OUTBASE / "data_clean"
+    out_enr_dir   = OUTBASE / "data_enriched"
+    out_rep_dir   = OUTBASE / "reports"
     out_clean_dir.mkdir(parents=True, exist_ok=True)
     out_enr_dir.mkdir(parents=True, exist_ok=True)
     out_rep_dir.mkdir(parents=True, exist_ok=True)
 
-    # config
+    print(f"[INFO] OUTBASE = {OUTBASE}")
+
     cfg        = load_ta_config(CFG_PATH)
     regime_cfg = cfg.get("regime", DEFAULT_CFG["regime"])
 
-    # load master input
     df = read_input_csv(args.input)
 
-    # accumulators
     rep_rows, clean_blocks, enr_blocks = [], [], []
 
     for ticker, g in tqdm(df.groupby("ticker", sort=False),
@@ -242,17 +321,16 @@ def main():
         outlier_m  = detect_outliers(g);   outlier_count = int(outlier_m.sum())
         g["outlier_flag"] = outlier_m
 
-        # Build expected schedule (UTC-aware) and align safely
         exp_idx    = expected_index_for_freq(g, args.freq, args.tz, args.rth or None)
         missing_ix = detect_missing(g, exp_idx); missing_count = int(len(missing_ix))
 
-        # SAFE alignment: left-join the schedule to real data
+        # SAFE alignment
         sched  = pd.DataFrame({"datetime": exp_idx})
         g      = g.sort_values("datetime").drop_duplicates(subset=["datetime"])
         merged = sched.merge(g, on="datetime", how="left")
         merged["ticker"] = ticker
 
-        # minimal fills so TA can compute (no look-ahead beyond ffill)
+        # minimal fills
         for c in ["open","high","low","close","volume"]:
             merged[c] = pd.to_numeric(merged.get(c), errors="coerce")
 
@@ -262,10 +340,6 @@ def main():
         merged["low"]    = merged["low"].fillna(merged[["open","close"]].min(axis=1))
         merged["volume"] = merged["volume"].fillna(0)
 
-        nnz_close = float(merged["close"].notna().mean())
-        if nnz_close < 0.1:
-            print(f"[WARN] {ticker}: close coverage low after alignment (nnz={nnz_close:.3f})")
-
         clean_blocks.append(merged.assign(_source="clean"))
 
         # ---------- TA enrichment ----------
@@ -273,23 +347,49 @@ def main():
         for c in ["open","high","low","close","volume"]:
             ge[c] = pd.to_numeric(ge[c], errors="coerce")
 
+        # --- NEW: overlay ADJUSTED_LAST OHLC from data_raw/daily for this ticker ---
+        # Join by UTC-normalized date; then *overwrite* base OHLC where adjusted exists.
+        ge["_date"] = pd.to_datetime(ge["datetime"], utc=True, errors="coerce").dt.normalize()
+        adj = _load_adjusted_from_daily_raw(ticker)
+        if not adj.empty:
+            adj = adj.rename(columns={
+                "open": "adj_open",
+                "high": "adj_high",
+                "low":  "adj_low",
+                "close":"adj_close",
+            })
+            ge = ge.merge(adj, left_on="_date", right_on="date", how="left")
+            ge.drop(columns=["date"], inplace=True)
+            for base, adjc in (("open","adj_open"),("high","adj_high"),
+                               ("low","adj_low"), ("close","adj_close")):
+                if adjc in ge.columns:
+                    ge[base] = ge[adjc].combine_first(ge[base])
+            drop_adj = [c for c in ("adj_open","adj_high","adj_low","adj_close") if c in ge.columns]
+            if drop_adj:
+                ge.drop(columns=drop_adj, inplace=True)
+        ge.drop(columns=["_date"], inplace=True, errors="ignore")
+
+        # TA features (now computed on adjusted OHLC if available)
         for n in cfg.get("EMA", []):      ge[f"ema{int(n)}"] = ema(ge["close"], int(n))
         for n in cfg.get("SMA", []):      ge[f"sma{int(n)}"] = sma(ge["close"], int(n))
         for n in cfg.get("RSI", []):      ge[f"rsi{int(n)}"] = rsi(ge["close"], int(n))
         for n in cfg.get("ATR", []):      ge[f"atr{int(n)}"] = atr(ge, int(n))
         for n in cfg.get("ADX", []):      ge[f"adx{int(n)}"] = adx(ge, int(n))
+
         for bb in cfg.get("Bollinger", []):
             L = int(bb.get("length", 20)); S = float(bb.get("std", 2.0))
             lo, mid, up = bollinger(ge["close"], L, S)
             ge[f"bb_{L}_{S}_lower"] = lo
             ge[f"bb_{L}_{S}_mid"]   = mid
             ge[f"bb_{L}_{S}_upper"] = up
+
         for m in cfg.get("MACD", []):
             f = int(m.get("fast",12)); s = int(m.get("slow",26)); sig = int(m.get("signal",9))
             mline, msig, mhist = macd(ge["close"], f, s, sig)
             ge[f"macd_{f}_{s}_{sig}"]      = mline
             ge[f"macd_{f}_{s}_{sig}_sig"]  = msig
             ge[f"macd_{f}_{s}_{sig}_hist"] = mhist
+
         for st in cfg.get("Stochastic", []):
             k = int(st.get("k",14)); d = int(st.get("d",3)); sm = int(st.get("smooth",3))
             k_s, d_s = stochastic(ge, k, d, sm)
@@ -297,7 +397,7 @@ def main():
             ge[f"stoch_{k}_{d}_{sm}_d"] = d_s
 
         # Regime labels
-        ema_len = int(regime_cfg.get("ema_slope_len", 44))
+        ema_len = int(cfg.get("regime", {}).get("ema_slope_len", 44))
         ema_col = f"ema{ema_len}" if f"ema{ema_len}" in ge.columns else None
         if ema_col:
             ge["ema_slope"] = ge[ema_col] - ge[ema_col].shift(1)
@@ -305,16 +405,16 @@ def main():
             tmp = ema(ge["close"], ema_len)
             ge["ema_slope"] = tmp - tmp.shift(1)
 
-        adx_len = int(regime_cfg.get("ADX_len", 14))
+        adx_len = int(cfg.get("regime", {}).get("ADX_len", 14))
         adx_col = f"adx{adx_len}" if f"adx{adx_len}" in ge.columns else (next((c for c in ge.columns if c.startswith("adx")), None))
         if adx_col is None:
             ge["adx_tmp"] = 0.0
             adx_col = "adx_tmp"
 
-        ge["is_trending"] = (ge[adx_col] >= float(regime_cfg.get("adx_trend_min", 20.0))) & (ge["ema_slope"] > 0)
-        ge["is_sideways"] = (ge[adx_col] <= float(regime_cfg.get("adx_sideways_max", 15.0))) & (ge["ema_slope"].abs() <= float(regime_cfg.get("ema_slope_flat_abs", 0.02)))
+        ge["is_trending"] = (ge[adx_col] >= float(cfg.get("regime", {}).get("adx_trend_min", 20.0))) & (ge["ema_slope"] > 0)
+        ge["is_sideways"] = (ge[adx_col] <= float(cfg.get("regime", {}).get("adx_sideways_max", 15.0))) & (ge["ema_slope"].abs() <= float(cfg.get("regime", {}).get("ema_slope_flat_abs", 0.02)))
 
-        # ---------- Pullback-to-EMA logic ----------
+        # Pullback-to-EMA logic
         pb_cfg = cfg.get("Pullback", {"ema": 20, "trend_fast": 20, "trend_mid": 44, "trend_slow": 100,
                                       "band_pct": 0.005, "rsi_len": 14, "rsi_ceiling": 68})
         ema_pb   = int(pb_cfg.get("ema", 20))
@@ -342,7 +442,7 @@ def main():
         ge["bounce_up"] = ge["close"] >= ge[f"ema{ema_pb}"]
         ge["pullback_entry"] = ge["trend_ok"] & ge["touch_ema_pb"] & ge["bounce_up"] & (ge[rsi_col] < rsi_max)
 
-        # ---------- EMA20 2-day close trend start & stable age ----------
+        # EMA20 trend counters
         if "ema20" not in ge.columns:
             ge["ema20"] = ema(ge["close"], 20)
 
@@ -351,7 +451,6 @@ def main():
         ge["above_ema20"] = cond_above
         ge["below_ema20"] = cond_below
 
-        # Consecutive closes above EMA20 (bars)
         groups = (~cond_above).cumsum()
         runpos = cond_above.groupby(groups).cumcount() + 1
         ge["above_ema20_streak"] = pd.Series(np.where(cond_above, runpos, 0), index=ge.index)
@@ -366,10 +465,9 @@ def main():
             )
         )
 
-        ge["trend_long_age"] = np.where(cond_above, np.maximum(ge["above_ema20_streak"] - 1, 0), 0)
+        ge["trend_long_age"] = np.maximum(ge["above_ema20_streak"] - 1, 0)
         ge["above_ema20_streak_ge2"] = ge["above_ema20_streak"] >= 2
 
-        # --- Vermeulen-simple counters (Series-only ops; nullable Int64) ---
         s = ge["above_ema20_streak"]
         ge["trend_days_active"] = s.astype("Int64")
         ge["trend_days_since_start"] = (s.where(s >= 2, 1) - 1).astype("Int64")
@@ -408,9 +506,9 @@ def main():
     clean_all = pd.concat(clean_blocks, ignore_index=True) if clean_blocks else pd.DataFrame(columns=REQ_COLS)
     enr_all   = pd.concat(enr_blocks,   ignore_index=True) if enr_blocks   else pd.DataFrame()
 
-    clean_path = P.ROOT / "data_clean"    / "prices_clean.parquet"
-    enr_path   = P.ROOT / "data_enriched" / "prices_enriched.parquet"
-    rep_path   = P.ROOT / "reports"       / f"integrity_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M')}.csv"
+    clean_path = OUTBASE / "data_clean"    / "prices_clean.parquet"
+    enr_path   = OUTBASE / "data_enriched" / "prices_enriched.parquet"
+    rep_path   = OUTBASE / "reports"       / f"integrity_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M')}.csv"
 
     if not clean_all.empty: clean_all.to_parquet(clean_path, index=False)
     if not enr_all.empty:   enr_all.to_parquet(enr_path,   index=False)
@@ -422,7 +520,7 @@ def main():
 
     log_schema(enr_all, note="enriched_final")
     if args.debug or args.debug_full:
-        save_debug(enr_all, Path(P.ROOT / "data_enriched"), "prices_enriched")
+        save_debug(enr_all, Path(OUTBASE / "data_enriched"), "prices_enriched")
 
 if __name__ == "__main__":
     main()

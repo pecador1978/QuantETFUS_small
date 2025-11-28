@@ -2,41 +2,61 @@
 # -*- coding: utf-8 -*-
 
 """
-s07_full_weekly_historical.py — Seed WEEKLY bars ONLY for tickers missing locally
-(USD-only, London-first; universe from Excel)
+s07_full_weekly_historical.py — Seed WEEKLY bars ONLY for tickers missing locally.
 
-- Universe: /Users/Finance/QuantShared/ETF_list.xlsx (sheet 'signalsUSD' by default).
+- Universe: ETF_list.xlsx (sheet from env ETF_SHEET or paths.default_etf_sheet()).
 - If CSV exists locally → SKIP. If missing → pull ~N years from IBKR and save.
-- Works for:
-    frame=weekly → barSizeSetting="1 week", RAW_DIR=/Users/Finance/QuantShared/data_raw_ETF_US/weekly
-- Exchange/Contract preference: LSEETF(USD) → LSE(USD) → SMART primary LSEETF/LSE → SMART(USD)
-- Clean logging: suppress IB warnings 162/200/321 unless we truly fail to fetch any rows.
+- Output: <OUTDIR>/{TICKER}_weekly_raw.csv   (OUTDIR defaults to P.SHARED_WEEKLY_DIR)
+- Venue/currency preference is driven by env or CLI (no LSE hard-coding):
+    MAPPING_PRIMARY_EXCH_SEGMENTS="NASDAQ,NYE,ARCA"   # example for US
+    MAPPING_PREFERRED_CCY="USD,EUR"                   # highest priority first
+- If config/ticker_mapping.csv exists, build SMART contract from it first.
 """
 
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from contextlib import contextmanager
-import argparse, time
+from typing import List, Optional, Tuple, Dict, Any
+import argparse, time, os, sys
 import pandas as pd
-from ib_insync import IB, Contract, Stock, util
+from ib_insync import IB, Contract, Stock, ContractDetails, util
 
-# --------- Defaults ---------
-DEFAULT_EXCEL  = Path("/Users/Finance/QuantShared/ETF_list.xlsx")
-DEFAULT_SHEET  = "signalsUSD"
-PREFERRED_COLS = ("Ticker", "Symbol", "ticker", "symbol")
+# ---------- project-aware imports ----------
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-BASE_DIR = Path("/Users/Finance/QuantShared/data_raw_ETF_US")
-RAW_DIR  = BASE_DIR / "weekly"        # <— weekly output only
+from common.paths import P                    # SHARED_WEEKLY_DIR, CONFIG_DIR, etc.
+from common.settings import ETF_LIST_PATH_STR, DEFAULT_ETF_SHEET
+
+# ---------- env-driven defaults (local vars to avoid global gotchas) ----------
+ENV_SEGMENTS = os.environ.get("MAPPING_PRIMARY_EXCH_SEGMENTS", "")
+DEFAULT_EXCHANGE_SEGMENTS: tuple[str, ...] = tuple(
+    s.strip().upper() for s in ENV_SEGMENTS.split(",") if s.strip()
+) or ("LSEETF", "LSE", "LSEETP", "LSEIOB")  # safe default
+
+ENV_CCY = os.environ.get("MAPPING_PREFERRED_CCY", "")
+DEFAULT_PREFERRED_CCY: tuple[str, ...] = tuple(
+    c.strip().upper() for c in ENV_CCY.split(",") if c.strip()
+) or ("USD", "GBP")
+
+# ---------- paths ----------
+RAW_DIR_DEFAULT = P.SHARED_WEEKLY_DIR
+MAPPING_CSV     = P.CONFIG_DIR / "ticker_mapping.csv"
+ETF_XLSX        = Path(ETF_LIST_PATH_STR).resolve()
+ETF_SHEET       = DEFAULT_ETF_SHEET
+PREFERRED_COLS  = ("Ticker", "Symbol", "ticker", "symbol")
+
 BAR_SIZE = "1 week"
-PAGE_DAYS = 1825                      # ~5y page to respect HMDS constraints
+PAGE_DAYS_DEFAULT = int(os.environ.get("WEEKLY_PAGE_DAYS", "1825"))   # ~5y per page
 
-# --------- Clean logging (mute spammy errors) ---------
+# ---------- logging / noise control ----------
 SUPPRESS_CODES = {162, 200, 321}
 
 @contextmanager
 def mute_ibkr_warnings(ib: IB):
-    """Suppress common IBKR HMDS spam (162, 200, 321)."""
     def _handler(reqId, errorCode, errorString, misc=None):
         if errorCode in SUPPRESS_CODES:
             return
@@ -47,8 +67,8 @@ def mute_ibkr_warnings(ib: IB):
     finally:
         ib.errorEvent -= _handler
 
-# --------- Excel universe ---------
-def load_universe_from_excel(xlsx: Path, sheet: str) -> list[str]:
+# ---------- universe ----------
+def load_universe_from_excel(xlsx: Path, sheet: str) -> List[str]:
     if not xlsx.exists():
         raise SystemExit(f"[ERR] Universe file missing: {xlsx}")
     df = pd.read_excel(xlsx, sheet_name=sheet)
@@ -59,41 +79,7 @@ def load_universe_from_excel(xlsx: Path, sheet: str) -> list[str]:
     s = df[chosen].astype(str).str.strip().str.upper()
     return [t for t in s.unique().tolist() if t and t not in {"NAN", "NONE"}]
 
-# --------- IB helpers ---------
-def try_qualify_london_usd(ib: IB, symbol: str) -> Contract | None:
-    """
-    Prefer LSEETF/LSE in USD; then SMART pinned to LSEETF/LSE; then secType='ETF';
-    lastly discover via reqContractDetails and filter to USD + (LSEETF/LSE).
-    """
-    attempts: list[Contract] = [
-        Stock(symbol, 'LSEETF', 'USD'),
-        Stock(symbol, 'LSE',    'USD'),
-        Stock(symbol, 'SMART',  'USD', primaryExchange='LSEETF'),
-        Stock(symbol, 'SMART',  'USD', primaryExchange='LSE'),
-        Contract(symbol=symbol, secType='ETF', exchange='LSEETF', currency='USD'),
-        Contract(symbol=symbol, secType='ETF', exchange='SMART',  currency='USD', primaryExchange='LSEETF'),
-    ]
-    with mute_ibkr_warnings(ib):
-        for con in attempts:
-            try:
-                got = ib.qualifyContracts(con)
-                if got:
-                    return got[0]
-            except Exception:
-                pass
-        # Discovery fallback
-        try:
-            for venue in ('LSEETF', 'SMART'):
-                cds = ib.reqContractDetails(Stock(symbol, venue, 'USD'))
-                for cd in cds:
-                    c = cd.contract
-                    px = (c.primaryExchange or c.exchange or '').upper()
-                    if (c.currency or '').upper() == 'USD' and px in {'LSEETF', 'LSE'}:
-                        return c
-        except Exception:
-            pass
-    return None
-
+# ---------- csv utils ----------
 def normalize_hist_df(df: pd.DataFrame) -> pd.DataFrame:
     if df is None or df.empty or "date" not in df.columns:
         return pd.DataFrame(columns=["date","open","high","low","close","volume","average","barCount"])
@@ -111,17 +97,77 @@ def save_csv(path_csv: Path, df: pd.DataFrame):
     out = df.drop_duplicates(subset=["date"]).sort_values("date")
     out.to_csv(path_csv, index=False)
 
-def probe_stream(ib: IB, con: Contract, hist_days: int = 30):
+# ---------- contract resolution ----------
+def _contract_from_mapping(ticker: str, preferred_ccy: tuple[str, ...], segments: tuple[str, ...]) -> Optional[Contract]:
+    """Build a SMART contract from mapping CSV row if available."""
+    if not MAPPING_CSV.exists():
+        return None
+    # robust read: accept ; or , and handle BOM
+    try:
+        df = pd.read_csv(MAPPING_CSV, sep=None, engine="python")
+    except Exception:
+        df = pd.read_csv(MAPPING_CSV, sep=";")
+    cols = {c.lower(): c for c in df.columns}
+    req = {"ticker","currency","primaryexchange"}
+    if not req.issubset(set(cols.keys())):
+        return None
+    row = df[df[cols["ticker"]].astype(str).str.strip().str.upper() == ticker]
+    if row.empty:
+        return None
+    r = row.iloc[0]
+    currency = str(r[cols["currency"]]).upper() if pd.notna(r[cols["currency"]]) else (preferred_ccy[0] if preferred_ccy else "USD")
+    primary  = str(r[cols["primaryexchange"]]).upper() if pd.notna(r[cols["primaryexchange"]]) else (segments[0] if segments else "")
+    return Stock(symbol=ticker, exchange="SMART", currency=currency, primaryExchange=primary)
+
+def _is_primary_px(cd: ContractDetails, segments: tuple[str, ...]) -> bool:
+    return (cd.contract.primaryExchange or "").upper() in segments
+
+def _discover_contract(ib: IB, ticker: str, preferred_ccy: tuple[str, ...], segments: tuple[str, ...]) -> Optional[Contract]:
+    """Venue-agnostic discovery using env/CLI-preferred segments & currencies."""
+    for cur in preferred_ccy:
+        for seg in segments:
+            probe = Stock(ticker, 'SMART', cur, primaryExchange=seg)
+            try:
+                cds = ib.reqContractDetails(probe)
+                for cd in cds:
+                    c = cd.contract
+                    if (c.secType or "").upper() in {"STK","ETF"} and _is_primary_px(cd, segments):
+                        return c
+            except Exception:
+                continue
+    # fallback: plain SMART with preferred ccy
+    for cur in preferred_ccy:
+        try:
+            got = ib.qualifyContracts(Stock(ticker, 'SMART', cur))
+            if got:
+                return got[0]
+        except Exception:
+            continue
+    return None
+
+def resolve_contract(ib: IB, ticker: str, preferred_ccy: tuple[str, ...], segments: tuple[str, ...]) -> Optional[Contract]:
+    con = _contract_from_mapping(ticker, preferred_ccy, segments)
+    if con:
+        try:
+            got = ib.qualifyContracts(con)
+            if got:
+                return got[0]
+        except Exception:
+            pass
+    return _discover_contract(ib, ticker, preferred_ccy, segments)
+
+# ---------- probing + fetch ----------
+def probe_stream(ib: IB, con: Contract, hist_days: int = 30) -> Tuple[Optional[str], Optional[bool]]:
     """
-    Find a (whatToShow, useRTH) combo that returns *something* for 1-week bars.
-    Try TRADES/MIDPOINT/BID_ASK × RTH{1,0}, first via head timestamp, then via a small historical window.
+    Find a (whatToShow, useRTH) combo that returns data for weekly bars.
     """
     trials = [
         ("TRADES", True), ("TRADES", False),
         ("MIDPOINT", True), ("MIDPOINT", False),
         ("BID_ASK", True), ("BID_ASK", False),
     ]
-    end_str = datetime.now(timezone.utc).strftime("%Y%m%d %H:%M:%S")
+    end_dt = datetime.now(timezone.utc)
+    end_str = end_dt.strftime("%Y%m%d %H:%M:%S")
     with mute_ibkr_warnings(ib):
         # head timestamp probe
         for what, rth in trials:
@@ -131,16 +177,14 @@ def probe_stream(ib: IB, con: Contract, hist_days: int = 30):
                     return what, rth
             except Exception:
                 continue
-        # small historical probe
-        end_dt = datetime.now(timezone.utc)
-        start_dt = end_dt - timedelta(days=max(1, hist_days))
+        # tiny historical probe
         for what, rth in trials:
             try:
                 bars = ib.reqHistoricalData(
                     con,
-                    endDateTime=end_dt.strftime("%Y%m%d %H:%M:%S"),
-                    durationStr=f"{(end_dt - start_dt).days + 1} D",
-                    barSizeSetting=BAR_SIZE,
+                    endDateTime=end_str,
+                    durationStr=f"{max(1, hist_days)} D",
+                    barSizeSetting="1 week",
                     whatToShow=what,
                     useRTH=rth,
                     formatDate=1,
@@ -168,18 +212,15 @@ def fetch_paged(ib: IB, con: Contract, what: str, use_rth: bool,
             begin = max(start_dt, cursor - timedelta(days=page_days - 1))
             duration_days = (cursor - begin).days + 1
 
-            # --- IB quirk: for weekly bars, durations > 365 days must be in YEARS ---
-            if BAR_SIZE == "1 week" and duration_days > 365:
-                duration_str = f"{max(1, round(duration_days / 365))} Y"
-            else:
-                duration_str = f"{max(1, duration_days)} D"
+            # IB quirk: for weekly bars, long durations are more reliable in YEARS
+            duration_str = f"{max(1, round(duration_days / 365))} Y" if duration_days > 365 else f"{duration_days} D"
 
             try:
                 bars = ib.reqHistoricalData(
                     con,
                     endDateTime=cursor.strftime("%Y%m%d %H:%M:%S"),
                     durationStr=duration_str,
-                    barSizeSetting=BAR_SIZE,   # "1 week" or "1 day" / "30 mins"
+                    barSizeSetting="1 week",
                     whatToShow=what,
                     useRTH=use_rth,
                     formatDate=1,
@@ -197,14 +238,14 @@ def fetch_paged(ib: IB, con: Contract, what: str, use_rth: bool,
                         rows.append(got)
 
             cursor = begin - timedelta(seconds=1)
-            time.sleep(sleep_s)
+            time.sleep(max(sleep_s, 0.0))
 
     if not rows:
         return pd.DataFrame(columns=["date","open","high","low","close","volume","average","barCount"])
     out = pd.concat(rows, ignore_index=True).drop_duplicates(subset=["date"]).sort_values("date")
     return out[(out["date"] >= start_dt) & (out["date"] <= end_dt)].reset_index(drop=True)
 
-# --------- main ---------
+# ---------- main ----------
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default="127.0.0.1")
@@ -216,14 +257,24 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--only", nargs="*", default=[])
     ap.add_argument("--skip", nargs="*", default=[])
-    ap.add_argument("--excel", default=str(DEFAULT_EXCEL))
-    ap.add_argument("--sheet", default=str(DEFAULT_SHEET))
+    ap.add_argument("--excel", default=str(ETF_XLSX))
+    ap.add_argument("--sheet", default=str(ETF_SHEET))
+    ap.add_argument("--outdir", default=str(RAW_DIR_DEFAULT))
+    ap.add_argument("--segments", default=",".join(DEFAULT_EXCHANGE_SEGMENTS),
+                    help="PrimaryExchange segments to prefer, comma-separated (env MAPPING_PRIMARY_EXCH_SEGMENTS)")
+    ap.add_argument("--ccy", default=",".join(DEFAULT_PREFERRED_CCY),
+                    help="Preferred currencies, comma-separated (env MAPPING_PREFERRED_CCY)")
+    ap.add_argument("--page_days", type=int, default=PAGE_DAYS_DEFAULT)
     args = ap.parse_args()
 
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
+    # local, no globals
+    ex_segments = tuple(s.strip().upper() for s in args.segments.split(",") if s.strip()) or DEFAULT_EXCHANGE_SEGMENTS
+    pref_ccy    = tuple(c.strip().upper() for c in args.ccy.split(",") if c.strip()) or DEFAULT_PREFERRED_CCY
+
+    out_root = Path(args.outdir).resolve()
+    out_root.mkdir(parents=True, exist_ok=True)
     suffix = "weekly_raw.csv"
 
-    # Universe
     tickers = load_universe_from_excel(Path(args.excel), args.sheet)
     if args.only:
         allow = {t.upper() for t in args.only}
@@ -241,15 +292,14 @@ def main():
 
     seeded = 0
     for i, t in enumerate(tickers, 1):
-        out_path = RAW_DIR / f"{t}_{suffix}"
+        out_path = out_root / f"{t}_{suffix}"
         if file_exists(out_path):
             print(f"[{i}/{len(tickers)}] {t}: exists → SKIP")
             continue
-
         try:
-            con = try_qualify_london_usd(ib, t)
+            con = resolve_contract(ib, t, pref_ccy, ex_segments)
             if not con:
-                print(f"[{i}/{len(tickers)}] {t}: SKIP (no USD contract on LSE/LSEETF/SMART)")
+                print(f"[{i}/{len(tickers)}] {t}: SKIP (no qualified contract)")
                 continue
 
             what, use_rth = probe_stream(ib, con, hist_days=args.probe_days)
@@ -257,11 +307,11 @@ def main():
                 print(f"[{i}/{len(tickers)}] {t}: SKIP (no weekly stream found)")
                 continue
 
-            print(f"[{i}/{len(tickers)}] {t}: seeding ~{args.years}y weekly via {what} RTH={int(use_rth)}")
+            print(f"[{i}/{len(tickers)}] {t}: seeding ~{args.years}y weekly via {what} RTH={int(bool(use_rth))}")
             df = fetch_paged(
-                ib, con, what, use_rth,
+                ib, con, what, bool(use_rth),
                 years=args.years,
-                page_days=PAGE_DAYS,
+                page_days=int(args.page_days),
                 sleep_s=max(args.sleep_ms, 0) / 1000.0
             )
             if df.empty:
@@ -277,7 +327,7 @@ def main():
             print(f"[{i}/{len(tickers)}] {t}: ERROR {e}")
 
     ib.disconnect()
-    print(f"[DONE] Frame=weekly | Scanned {len(tickers)} | Newly seeded {seeded} | Dir → {RAW_DIR}")
+    print(f"[DONE] Frame=weekly | Scanned {len(tickers)} | Newly seeded {seeded} | Dir → {out_root}")
 
 if __name__ == "__main__":
     main()

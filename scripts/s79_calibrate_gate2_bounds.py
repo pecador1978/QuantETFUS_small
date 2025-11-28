@@ -17,9 +17,13 @@ import argparse, json, os
 import pandas as pd
 import numpy as np
 
-PROJECT_ROOT = Path("/Users/Finance/QuantETFUS_small")
-DEFAULT_INPUT_DIR  = PROJECT_ROOT / "data_enriched" / "30min"
-DEFAULT_OUTPUT_JSON= PROJECT_ROOT / "config" / "gate2_norm_bounds.json"
+# --- Project root resolution ---
+SCRIPT_DIR    = Path(__file__).resolve().parent
+DEFAULT_ROOT  = SCRIPT_DIR.parents[1]            # repo root (…/QuantETF_LSE or …/QuantETF_NY)
+PROJECT_ROOT  = Path(os.environ.get("PROJECT_ROOT", DEFAULT_ROOT))  
+
+DEFAULT_INPUT_DIR   = PROJECT_ROOT / "data_enriched" / "30min"
+DEFAULT_OUTPUT_JSON = PROJECT_ROOT / "config" / "gate2_norm_bounds.json"
 
 FEATURES = [
     "RSI14",
@@ -27,7 +31,7 @@ FEATURES = [
     "EMA5_slope",
     "EMA20_slope",
     "EMA44_slope",
-    "EMA340_slope",
+    "EMA260_slope",
     "Donchian_position",
     "Volatility_ATR",
     "Trend_alignment",
@@ -40,7 +44,7 @@ MIN_SPAN = {
     "EMA5_slope": 1e-5,
     "EMA20_slope": 5e-6,
     "EMA44_slope": 5e-6,
-    "EMA340_slope": 5e-6,
+    "EMA260_slope": 5e-6,
     "Donchian_position": 0.05,
     "Volatility_ATR": 0.02,
     "Trend_alignment": 1.0,  # boolean-like; keep [0,1]

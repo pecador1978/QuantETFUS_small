@@ -7,7 +7,8 @@ Quick inspector + debug snapshots for prices_enriched.parquet
 
 What it does
 ------------
-- Loads: P.DATA_ENRICHED/prices_enriched.parquet (or --parquet override)
+- Loads: <DATA_ENRICHED_BASE or P.DATA_ENRICHED>/prices_enriched.parquet
+         (or --parquet override)
 - Prints: row/column counts, date range, per-ticker stats
 - Validates: daily TA feature naming convention (*_d)
 - Reports (optional): columns list, null-counts, per-ticker coverage
@@ -19,7 +20,7 @@ Usage:
   python scripts/s30_inspect_enriched_parquet.py --parquet /custom/file.parquet
 """
 
-import sys, argparse
+import sys, argparse, os
 from pathlib import Path
 from datetime import datetime, timezone
 import pandas as pd
@@ -31,13 +32,17 @@ PROJECT_ROOT = SCRIPT_DIR.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from common.paths import P  # EU/US aware
+from common.paths import P  # project-aware roots
 
 def _ts() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
+def _env_path(name: str) -> Path | None:
+    v = os.environ.get(name, "").strip()
+    return Path(v).expanduser().resolve() if v else None
+
 def _reports_dir() -> Path:
-    # Prefer P.REPORTS_DIR if available, else fallback
+    # Prefer project-scoped REPORTS_DIR from common.paths
     rep = getattr(P, "REPORTS_DIR", None)
     d = rep if rep else (P.ROOT / "reports")
     d.mkdir(parents=True, exist_ok=True)
@@ -60,16 +65,21 @@ def save_debug_sample(df: pd.DataFrame, stem: str = "s30_sample", n: int = 200):
     snap.to_parquet(pq, index=False)
     print(f"[OK] Debug snapshot → {pq} (rows={len(snap)})")
 
+def _default_parquet_path() -> Path:
+    # Honor DATA_ENRICHED_BASE first, then P.DATA_ENRICHED
+    enriched_base = _env_path("DATA_ENRICHED_BASE") or getattr(P, "DATA_ENRICHED", P.ROOT / "data_enriched")
+    return (enriched_base / "prices_enriched.parquet").resolve()
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--parquet",
         type=str,
-        default=str(P.DATA_ENRICHED / "prices_enriched.parquet"),
-        help="Path to prices_enriched.parquet (default: P.DATA_ENRICHED/prices_enriched.parquet)",
+        default=str(_default_parquet_path()),
+        help="Path to prices_enriched.parquet (default: <DATA_ENRICHED_BASE or P.DATA_ENRICHED>/prices_enriched.parquet)",
     )
     ap.add_argument("--save_reports", action="store_true",
-                    help="Write CSV reports (columns, nulls, coverage) to /reports")
+                    help="Write CSV reports (columns, nulls, coverage) to /reports (project iCloud bucket)")
     ap.add_argument("--debug", action="store_true",
                     help="Save a small debug snapshot parquet to /reports/debug_enriched")
     ap.add_argument("--show_head", type=int, default=0,
@@ -77,10 +87,18 @@ def main():
     args = ap.parse_args()
 
     path = Path(args.parquet)
-    if not path.exists():
-        raise SystemExit(f"[ERR] Not found: {path}")
+    # Banner: show where we will read/write
+    print("=== s30 INSPECTOR ===")
+    print(f"P.ROOT            : {P.ROOT}")
+    print(f"P.PROJECT_SHARED  : {getattr(P, 'PROJECT_SHARED', None)}")
+    print(f"P.DATA_ENRICHED   : {getattr(P, 'DATA_ENRICHED', None)}")
+    print(f"REPORTS_DIR       : {_reports_dir()}")
+    print(f"[INFO] Loading    : {path}")
 
-    print(f"[INFO] Loading: {path}")
+    if not path.exists():
+        raise SystemExit(f"[ERR] Not found: {path}\n"
+                         f"Hint: run s30_enrich_to_parquet.py first to produce it.")
+
     df = pd.read_parquet(path)
     df.columns = [c.strip() for c in df.columns]
 
@@ -123,13 +141,12 @@ def main():
 
     # --- null counts ---
     print("\n=== NULL COUNTS (top 20 by %null) ===")
-    nulls = df.isna().mean().sort_values(ascending=False)
+    nulls = df.isna().mean(numeric_only=False).sort_values(ascending=False)
     top_nulls = nulls.head(20).reset_index()
     top_nulls.columns = ["column", "null_frac"]
     try:
         print(top_nulls.to_string(index=False, formatters={"null_frac": "{:.2%}".format}))
     except Exception:
-        # pandas version differences
         top_nulls["null_pct"] = (top_nulls["null_frac"] * 100).round(2)
         print(top_nulls.drop(columns=["null_frac"]).to_string(index=False))
 

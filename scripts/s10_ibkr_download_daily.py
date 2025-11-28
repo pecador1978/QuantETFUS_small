@@ -2,282 +2,342 @@
 # -*- coding: utf-8 -*-
 
 """
-s10_ibkr_download_daily.py — Append-only DAILY updater (IBKR via ib_insync, UTC-only)
+s10_ibkr_download_daily.py — Append-only DAILY updater (IBKR via ib_insync, UTC) — NY project
 
-- Universe: ETF_list.xlsx (sheet default comes from env ETF_SHEET or 'signalsUSD').
-- Output (append-only): <QuantShared>/data_raw_ETF_US/daily/{TICKER}_daily_raw.csv
-- Uses project ticker_mapping.csv when available to qualify contracts (prefers ConId/conId).
-- Fallback: London-USD qualification (LSEETF/LSE → SMART pinned), same logic as s06/s07.
-- Mutes noisy IB 162/200/321 chatter.
+- Universe: ETF_list.xlsx (sheet from env ETF_SHEET or paths.default_etf_sheet()).
+- Output: <OUTDIR>/{TICKER}_daily_raw.csv (append-only). OUTDIR defaults to P.SHARED_DAILY_DIR.
+- Mapping: prefers conId; robust CSV reader (comma/semicolon/BOM/case-insensitive).
+- Venue & currency: driven by env/CLI (no hard-coding):
+    MAPPING_PRIMARY_EXCH_SEGMENTS="NASDAQ,NYE,ARCA"
+    MAPPING_PREFERRED_CCY="USD,EUR"
+- First-run vs delta:
+    * If CSV missing → FULL_DURATION_D (default "30 Y")
+    * If CSV exists → DELTA_DURATION_D (default "10 D")
+- Optional --duration overrides both behaviors for all tickers.
 
-Environment (optional)
-- ETF_LIST_XLSX      : path to ETF_list.xlsx
-- ETF_SHEET          : sheet name (default 'signalsUSD')
-- SHARED_RAW_BASE    : base dir for raw data (default /Users/Finance/QuantShared/data_raw_ETF_US)
-- TICKER_MAPPING_CSV : mapping CSV (default /Users/Finance/QuantETFUS_small/config/ticker_mapping.csv)
-- DEFAULT_CCY        : default currency if mapping missing (default 'USD')
+IMPORTANT (this NY version):
+- Defaults to ADJUSTED_LAST and adds __what column.
+- --force_adjusted=1 (default) enforces ADJUSTED_LAST even if --what is passed.
 """
 
 from __future__ import annotations
-
 from pathlib import Path
 from contextlib import contextmanager
-from typing import Optional, Dict, Any
-import os
-import argparse
-import pandas as pd
+from typing import Optional, Dict, Any, Tuple, List
+from datetime import datetime, timezone
+import os, argparse, sys, pandas as pd
+from ib_insync import IB, Contract, Stock, ContractDetails, util
 
-from ib_insync import IB, Contract, Stock, util
+# ---------- project-aware imports ----------
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-# ===== Paths & defaults =====
-SHARED_BASE   = Path(os.environ.get("SHARED_RAW_BASE", "/Users/Finance/QuantShared/data_raw_ETF_US"))
-DAILY_DIR     = SHARED_BASE / "daily"
-DAILY_DIR.mkdir(parents=True, exist_ok=True)
+from common.paths import P                     # SHARED_DAILY_DIR, CONFIG_DIR, etc.
+from common.settings import ETF_LIST_PATH_STR, DEFAULT_ETF_SHEET
 
-DEFAULT_EXCEL = Path(os.environ.get("ETF_LIST_XLSX", "/Users/Finance/QuantShared/ETF_list.xlsx"))
-DEFAULT_SHEET = os.environ.get("ETF_SHEET", "signalsUSD")
+# ---------- env-driven defaults ----------
+ENV_SEGMENTS = os.environ.get("MAPPING_PRIMARY_EXCH_SEGMENTS", "")
+DEFAULT_EXCHANGE_SEGMENTS: Tuple[str, ...] = tuple(
+    s.strip().upper() for s in ENV_SEGMENTS.split(",") if s.strip()
+) or ("NASDAQ","NYE","ARCA")
 
-# IMPORTANT: default to the *project* mapping file
-DEFAULT_MAPPING = Path(os.environ.get(
-    "TICKER_MAPPING_CSV",
-    "/Users/Finance/QuantETFUS_small/config/ticker_mapping.csv"
-))
+ENV_CCY = os.environ.get("MAPPING_PREFERRED_CCY", "")
+DEFAULT_PREFERRED_CCY: Tuple[str, ...] = tuple(
+    c.strip().upper() for c in ENV_CCY.split(",") if c.strip()
+) or ("USD","EUR")
 
-DEFAULT_CCY   = os.environ.get("DEFAULT_CCY", "USD")
+# First-run / delta windows (overridable via env)
+FULL_DURATION_D  = os.environ.get("IB_FULL_DURATION_D",  "30 Y")
+DELTA_DURATION_D = os.environ.get("IB_DELTA_DURATION_D", "10 D")
 
-print(f"[INFO] Excel={DEFAULT_EXCEL} | sheet={DEFAULT_SHEET} | out={DAILY_DIR}")
+# ---------- paths & files ----------
+DAILY_DIR_DEFAULT = P.SHARED_DAILY_DIR
+ETF_XLSX  = Path(ETF_LIST_PATH_STR).resolve()
+ETF_SHEET = DEFAULT_ETF_SHEET
+ETF_COL   = os.environ.get("ETF_TICKER_COL", "Ticker")
+MAPPING_CSV_DEFAULT = P.CONFIG_DIR / "ticker_mapping.csv"
 
-# ===== Logging / IB warning muter =====
+# ---------- Mute common IB noise ----------
 @contextmanager
-def mute_ibkr_warnings(ib: IB, suppress_codes=(162, 200, 321)):
-    """
-    Mute common noisy messages:
-      162 HMDS query returned no data
-      200 No security definition found
-      321 Error validating request
-    Still prints other unexpected errors with their code.
-    """
-    def _handler(reqId, code, msg, *a, **k):
+def mute_ib(ib: IB, suppress=(162, 200, 321)):
+    def _h(reqId, code, msg, *a, **k):
         try:
-            code_int = int(code)
+            c = int(code)
         except Exception:
-            code_int = None
-        if code_int in suppress_codes:
+            c = None
+        if c in suppress:
             return
         print(f"[IB {code}] {msg}")
-    ib.errorEvent += _handler
+    ib.errorEvent += _h
     try:
         yield
     finally:
-        ib.errorEvent -= _handler
-
-# ===== Excel & CSV helpers =====
-def load_tickers_from_excel(path_xlsx: str | Path, sheet: str, col_name: str = "Ticker") -> list[str]:
-    df = pd.read_excel(path_xlsx, sheet_name=sheet)
-    colmap = {c.lower(): c for c in df.columns}
-    key = col_name.lower()
-    if key not in colmap:
-        raise ValueError(f"Column '{col_name}' not found in {path_xlsx} (sheet '{sheet}').")
-    tickers = df[colmap[key]].astype(str).str.strip().str.upper()
-    return [t for t in tickers.unique().tolist() if t]
-
-def load_mapping(path_csv: str | Path) -> dict[str, Dict[str, Any]]:
-    """
-    Optional mapping CSV (semicolon-delimited).
-    Recommended columns:
-      Ticker;ConId;SecType;Exchange;Currency;PrimaryExchange
-    (accepts 'conId' or 'ConId')
-    """
-    p = Path(path_csv)
-    if not p.exists():
-        return {}
-    df = pd.read_csv(p, sep=";")
-    if "Ticker" not in df.columns:
-        raise ValueError(f"{p} must have a 'Ticker' column (semicolon-separated).")
-
-    # normalize column presence / casing
-    if "ConId" in df.columns and "conId" not in df.columns:
-        df["conId"] = df["ConId"]
-    for col in ["conId","SecType","Exchange","Currency","PrimaryExchange"]:
-        if col not in df.columns:
-            df[col] = ""
-
-    mp: dict[str, Dict[str, Any]] = {}
-    for _, r in df.iterrows():
-        t = str(r["Ticker"]).strip().upper()
-        if not t:
-            continue
-        mp[t] = {
-            "conId":           str(r.get("conId", "")).strip(),
-            "SecType":         (str(r.get("SecType", "")).strip() or "STK").upper(),
-            "Exchange":        str(r.get("Exchange", "")).strip() or "SMART",
-            "Currency":        (str(r.get("Currency", "")).strip() or DEFAULT_CCY).upper(),
-            "PrimaryExchange": str(r.get("PrimaryExchange", "")).strip(),
-        }
-    return mp
-
-# ===== Contract builders =====
-def contract_from_map(ticker: str, mapping: dict[str, Dict[str, Any]]) -> Optional[Contract]:
-    m = mapping.get(ticker.upper())
-    if not m:
-        return None
-    # Prefer conId if supplied (most reliable)
-    conId = m.get("conId", "")
-    if conId and str(conId).isdigit():
-        c = Contract()
-        c.conId = int(conId)
-        return c
-    # Otherwise build from fields
-    c = Contract()
-    c.symbol          = ticker
-    c.secType         = m.get("SecType", "STK") or "STK"
-    c.exchange        = m.get("Exchange", "SMART") or "SMART"
-    c.currency        = m.get("Currency", DEFAULT_CCY) or DEFAULT_CCY
-    pe = m.get("PrimaryExchange", "")
-    if pe:
-        c.primaryExchange = pe
-    return c
-
-def try_qualify_london_usd(ib: IB, symbol: str) -> Optional[Contract]:
-    """
-    Prefer LSEETF/LSE in USD; then SMART pinned to LSEETF/LSE; then ETF secType;
-    finally discover via reqContractDetails and filter to USD + (LSEETF/LSE).
-    Matches s06/s07 so behavior is consistent.
-    """
-    attempts: list[Contract] = [
-        Stock(symbol, 'LSEETF', 'USD'),
-        Stock(symbol, 'LSE',    'USD'),
-        Stock(symbol, 'SMART',  'USD', primaryExchange='LSEETF'),
-        Stock(symbol, 'SMART',  'USD', primaryExchange='LSE'),
-        Contract(symbol=symbol, secType='ETF', exchange='LSEETF', currency='USD'),
-        Contract(symbol=symbol, secType='ETF', exchange='SMART', currency='USD', primaryExchange='LSEETF'),
-    ]
-    for con in attempts:
         try:
-            got = ib.qualifyContracts(con)
-            if got:
-                return got[0]
+            ib.errorEvent -= _h
         except Exception:
             pass
 
-    # Discovery fallback
+# ---------- Helpers ----------
+def load_tickers_from_excel(path_xlsx: str | Path, sheet: str, col_name: str = "Ticker") -> List[str]:
+    x = Path(path_xlsx).expanduser().resolve()
+    if not x.exists():
+        raise SystemExit(f"[ERR] Universe Excel not found: {x}")
+    df = pd.read_excel(x, sheet_name=sheet)
+    colmap = {c.lower().strip(): c for c in df.columns}
+    key = col_name.lower().strip()
+    if key not in colmap:
+        raise ValueError(f"Column '{col_name}' not found in {x} (sheet '{sheet}').")
+    s = df[colmap[key]].astype(str).str.strip().str.upper()
+    return [t for t in s.unique().tolist() if t and t not in {"NAN","NONE"}]
+
+def _read_mapping_df(path_csv: Path) -> pd.DataFrame:
+    if not path_csv.exists():
+        return pd.DataFrame()
     try:
-        for base in (Stock(symbol, 'LSEETF', 'USD'), Stock(symbol, 'SMART', 'USD')):
-            cds = ib.reqContractDetails(base)
-            for cd in cds:
-                c = cd.contract
-                px = (c.primaryExchange or c.exchange or '').upper()
-                if (c.currency or '').upper() == 'USD' and px in {'LSEETF', 'LSE'}:
-                    return c
+        df = pd.read_csv(path_csv, sep=None, engine="python")
     except Exception:
-        pass
+        df = pd.DataFrame()
+        for sep in (",",";"):
+            try:
+                df = pd.read_csv(path_csv, sep=sep); break
+            except Exception:
+                pass
+    if df.empty:
+        return df
+    df.columns = [str(c).encode("utf-8").decode("utf-8-sig").strip() for c in df.columns]
+    return df
+
+def load_mapping(path_csv: str | Path) -> Dict[str, Dict[str, Any]]:
+    df = _read_mapping_df(Path(path_csv))
+    if df.empty:
+        return {}
+    cmap = {c.lower(): c for c in df.columns}
+    if "ticker" not in cmap:
+        raise ValueError(f"{path_csv} must include a 'Ticker' column.")
+
+    def col_or_default(name: str, default: str) -> pd.Series:
+        k = name.lower()
+        if k in cmap:
+            s = df[cmap[k]]
+            return s if isinstance(s, pd.Series) else pd.Series([default] * len(df))
+        return pd.Series([default] * len(df))
+
+    preferred_ccy = DEFAULT_PREFERRED_CCY[0] if DEFAULT_PREFERRED_CCY else "USD"
+
+    norm = pd.DataFrame({
+        "Ticker":          col_or_default("Ticker",          "").astype(str).str.strip().str.upper(),
+        "conId":           col_or_default("ConId",           "").astype(str).str.strip(),
+        "SecType":         col_or_default("SecType",         "STK").astype(str).str.strip(),
+        "Exchange":        col_or_default("Exchange",        "SMART").astype(str).str.strip(),
+        "Currency":        col_or_default("Currency",        preferred_ccy).astype(str).str.strip(),
+        "PrimaryExchange": col_or_default("PrimaryExchange", "").astype(str).str.strip(),
+        "Symbol":          col_or_default("Symbol",          "").astype(str).str.strip(),
+        "LocalSymbol":     col_or_default("LocalSymbol",     "").astype(str).str.strip(),
+    }).fillna("")
+
+    out: Dict[str, Dict[str, Any]] = {}
+    for _, r in norm.iterrows():
+        t = r["Ticker"]
+        if not t:
+            continue
+        out[t] = {
+            "conId":           r["conId"],
+            "SecType":         r["SecType"] or "STK",
+            "Exchange":        r["Exchange"] or "SMART",
+            "Currency":        r["Currency"] or preferred_ccy,
+            "PrimaryExchange": r["PrimaryExchange"],
+            "Symbol":          r["Symbol"] or t,
+            "LocalSymbol":     r["LocalSymbol"],
+        }
+    return out
+
+def contract_from_map(ticker: str, mapping: Dict[str, Dict[str, Any]]) -> Optional[Contract]:
+    m = mapping.get(ticker.upper())
+    if not m:
+        return None
+    conId = m.get("conId","")
+    if conId and str(conId).isdigit():
+        c = Contract(); c.conId = int(conId); return c
+    c = Contract()
+    c.symbol = m.get("Symbol") or ticker
+    c.localSymbol = m.get("LocalSymbol") or c.symbol
+    c.secType = m.get("SecType","STK") or "STK"
+    c.exchange = m.get("Exchange","SMART") or "SMART"
+    c.currency = m.get("Currency", (DEFAULT_PREFERRED_CCY[0] if DEFAULT_PREFERRED_CCY else "USD"))
+    pe = m.get("PrimaryExchange","")
+    if pe: c.primaryExchange = pe
+    return c
+
+def _is_primary_px(cd: ContractDetails, segments: Tuple[str, ...]) -> bool:
+    return (cd.contract.primaryExchange or "").upper() in segments
+
+def discover_contract(ib: IB, ticker: str, preferred_ccy: Tuple[str, ...], segments: Tuple[str, ...]) -> Optional[Contract]:
+    for cur in preferred_ccy:
+        for seg in segments:
+            probe = Stock(ticker, 'SMART', cur, primaryExchange=seg)
+            try:
+                cds = ib.reqContractDetails(probe)
+                for cd in cds:
+                    c = cd.contract
+                    if (c.secType or "").upper() in {"STK","ETF"} and _is_primary_px(cd, segments):
+                        return c
+            except Exception:
+                continue
+    for cur in preferred_ccy:
+        try:
+            got = ib.qualifyContracts(Stock(ticker, 'SMART', cur))
+            if got:
+                return got[0]
+        except Exception:
+            continue
     return None
 
-# ===== Data fetch & append =====
-def fetch_daily_df(ib: IB, contract: Contract, duration: str, what: str, use_rth: bool) -> pd.DataFrame:
+def fetch_daily(ib: IB, con: Contract, duration: str, what: str, use_rth: bool) -> pd.DataFrame:
     bars = ib.reqHistoricalData(
-        contract,
-        endDateTime="",               # now
+        con,
+        endDateTime="",                 # IMPORTANT for ADJUSTED_LAST
         durationStr=duration,
         barSizeSetting="1 day",
         whatToShow=what,
         useRTH=use_rth,
         formatDate=1,
-        keepUpToDate=False,
+        keepUpToDate=False
     )
     if not bars:
-        return pd.DataFrame(columns=["date","open","high","low","close","volume","average","barCount"])
+        return pd.DataFrame(columns=["date","open","high","low","close","volume","average","barCount","__what"])
     df = util.df(bars)
     if "date" not in df.columns:
-        return pd.DataFrame(columns=["date","open","high","low","close","volume","average","barCount"])
+        return pd.DataFrame(columns=["date","open","high","low","close","volume","average","barCount","__what"])
     df["date"] = pd.to_datetime(df["date"], utc=True, errors="coerce")
     for c in ["open","high","low","close","volume","average","barCount"]:
-        if c not in df.columns:
-            df[c] = pd.NA
+        if c not in df.columns: df[c] = pd.NA
         df[c] = pd.to_numeric(df[c], errors="coerce")
-    return df[["date","open","high","low","close","volume","average","barCount"]]
+    df["__what"] = str(what).upper()
+    return df[["date","open","high","low","close","volume","average","barCount","__what"]]
 
-def append_only(path_csv: str | Path, df_new: pd.DataFrame) -> int:
-    """Append only newer rows (by 'date' col), keep UTC."""
+def append_only(out_csv: Path, df_new: pd.DataFrame) -> int:
+    if df_new.empty: return 0
     df_new = df_new.copy()
     df_new["date"] = pd.to_datetime(df_new["date"], utc=True)
-    p = Path(path_csv)
-    if p.exists():
-        old = pd.read_csv(p)
-        if "date" not in old.columns:
-            raise ValueError(f"{p} missing 'date' column")
-        old["date"] = pd.to_datetime(old["date"], utc=True, errors="coerce")
-        last_dt = old["date"].max()
-        df_new = df_new[df_new["date"] > last_dt] if pd.notna(last_dt) else df_new
-        merged = pd.concat([old, df_new], ignore_index=True)
-    else:
-        merged = df_new
-    merged = merged.drop_duplicates(subset=["date"]).sort_values("date")
-    p.parent.mkdir(parents=True, exist_ok=True)
-    merged.to_csv(p, index=False)
-    return len(df_new)
 
-# ===== main =====
+    cols = ["date","open","high","low","close","volume","average","barCount","__what"]
+    if out_csv.exists():
+        old = pd.read_csv(out_csv)
+        if "__what" not in old.columns:
+            old["__what"] = "LEGACY"
+        if "date" not in old.columns:
+            raise ValueError(f"{out_csv} missing 'date'")
+        old["date"] = pd.to_datetime(old["date"], utc=True, errors="coerce")
+        last = old["date"].max()
+        add = df_new[df_new["date"] > last] if pd.notna(last) else df_new
+        merged = pd.concat([old[cols], add[cols]], ignore_index=True)
+    else:
+        add = df_new[cols]
+        merged = add
+
+    merged = merged.drop_duplicates(subset=["date"]).sort_values("date")
+    out_csv.parent.mkdir(parents=True, exist_ok=True)
+    merged.to_csv(out_csv, index=False)
+    return len(add)
+
+# ---------- main ----------
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=7496)
     ap.add_argument("--client_id", type=int, default=60)
-    ap.add_argument("--duration", default="10 Y", help="IB durationStr (e.g., '10 Y')")
-    ap.add_argument("--what", default="TRADES", help="TRADES / MIDPOINT / BID_ASK")
-    ap.add_argument("--use_rth", type=int, default=1, help="1 = RTH only, 0 = all hours")
-    ap.add_argument("--excel", default=str(DEFAULT_EXCEL))
-    ap.add_argument("--sheet", default=str(DEFAULT_SHEET))
-    ap.add_argument("--ticker_col", default="Ticker")
-    ap.add_argument("--mapping", default=str(DEFAULT_MAPPING))
-    ap.add_argument("--outdir", default=str(DAILY_DIR))
+
+    ap.add_argument("--duration", default=None, help="IB durationStr override (e.g. '15 D', '3 Y').")
+
+    # SAFETY: default ADJUSTED_LAST; --force_adjusted=1 enforces it
+    ap.add_argument("--what", default="ADJUSTED_LAST", help="ADJUSTED_LAST / TRADES / MIDPOINT / BID_ASK")
+    ap.add_argument("--force_adjusted", type=int, default=1, help="1=force ADJUSTED_LAST (recommended), 0=allow custom --what")
+    ap.add_argument("--use_rth", type=int, default=1, help="1=RTH only, 0=all hours")
+
+    ap.add_argument("--excel", default=str(ETF_XLSX))
+    ap.add_argument("--sheet", default=str(ETF_SHEET))
+    ap.add_argument("--ticker_col", default=str(ETF_COL))
+    ap.add_argument("--mapping", default=str(MAPPING_CSV_DEFAULT))
+    ap.add_argument("--outdir", default=str(DAILY_DIR_DEFAULT))
     ap.add_argument("--sleep_ms", type=int, default=200)
     ap.add_argument("--limit", type=int, default=0)
+
+    # venue/currency preferences
+    ap.add_argument("--segments", default=",".join(DEFAULT_EXCHANGE_SEGMENTS),
+                    help="PrimaryExchange segments to prefer (env MAPPING_PRIMARY_EXCH_SEGMENTS)")
+    ap.add_argument("--ccy", default=",".join(DEFAULT_PREFERRED_CCY),
+                    help="Preferred currencies (env MAPPING_PREFERRED_CCY)")
+    ap.add_argument("--only", nargs="*", default=[])
+    ap.add_argument("--skip", nargs="*", default=[])
+
     args = ap.parse_args()
 
+    ex_segments: Tuple[str, ...] = tuple(s.strip().upper() for s in args.segments.split(",") if s.strip()) or DEFAULT_EXCHANGE_SEGMENTS
+    pref_ccy: Tuple[str, ...]    = tuple(c.strip().upper() for c in args.ccy.split(",") if c.strip()) or DEFAULT_PREFERRED_CCY
+
+    out_root = Path(args.outdir).resolve()
+    out_root.mkdir(parents=True, exist_ok=True)
+
     tickers = load_tickers_from_excel(args.excel, args.sheet, args.ticker_col)
+    if args.only:
+        allow = {t.upper() for t in args.only}
+        tickers = [t for t in tickers if t in allow]
+    if args.skip:
+        block = {t.upper() for t in args.skip}
+        tickers = [t for t in tickers if t not in block]
     if args.limit and args.limit > 0:
         tickers = tickers[: args.limit]
+
     mapping = load_mapping(args.mapping)
+
+    # Enforce adjusted if requested (default)
+    what = "ADJUSTED_LAST" if int(args.force_adjusted) == 1 else str(args.what).upper()
+    if what != "ADJUSTED_LAST":
+        print(f"[WARN] Using whatToShow={what}. Set --force_adjusted 1 (default) to enforce ADJUSTED_LAST.")
 
     ib = IB()
     print(f"[IB] Connecting {args.host}:{args.port} (clientId={args.client_id}) …")
     ib.connect(args.host, args.port, clientId=args.client_id, readonly=True)
     print("[IB] Connected.")
 
-    with mute_ibkr_warnings(ib):
+    with mute_ib(ib):
         for i, t in enumerate(tickers, 1):
             try:
-                # 1) mapping (prefer ConId) → qualify; fallback to London-USD discovery
                 con = contract_from_map(t, mapping)
                 if con:
                     q = ib.qualifyContracts(con)
-                    if not q:
-                        con = try_qualify_london_usd(ib, t)
-                    else:
-                        con = q[0]
-                else:
-                    con = try_qualify_london_usd(ib, t)
-
+                    con = q[0] if q else None
+                if not con:
+                    con = discover_contract(ib, t, pref_ccy, ex_segments)
                 if not con:
                     print(f"[{i}/{len(tickers)}] {t}: [SKIP] could not qualify")
                     continue
 
-                df = fetch_daily_df(ib, con, args.duration, args.what, bool(args.use_rth))
+                out_csv = out_root / f"{t}_daily_raw.csv"
+
+                # Decide duration
+                if args.duration:
+                    duration = args.duration
+                else:
+                    duration = DELTA_DURATION_D if out_csv.exists() else FULL_DURATION_D
+                    mode = "delta" if out_csv.exists() else "full"
+                    print(f"[INFO] {t}: {mode} duration {duration}")
+
+                df = fetch_daily(ib, con, duration, what, bool(args.use_rth))
                 if df.empty:
-                    print(f"[{i}/{len(tickers)}] {t}: [SKIP] no data")
+                    print(f"[{i}/{len(tickers)}] {t}: +0 → {out_csv} [what={what}]")
                     continue
 
-                out_path = Path(args.outdir) / f"{t}_daily_raw.csv"
-                added = append_only(out_path, df)
-                print(f"[{i}/{len(tickers)}] {t}: +{added} → {out_path}")
+                added = append_only(out_csv, df)
+                print(f"[{i}/{len(tickers)}] {t}: +{added} → {out_csv}  [what={what}]")
                 ib.sleep(max(args.sleep_ms, 0) / 1000.0)
-
             except Exception as e:
                 print(f"[{i}/{len(tickers)}] {t}: [ERR] {e}")
 
     ib.disconnect()
-    print("[DONE] s10_ibkr_download_daily (append-only, UTC) complete.")
+    print(f"[DONE] s10_ibkr_download_daily (NY) | Dir → {out_root}")
 
 if __name__ == "__main__":
     main()

@@ -33,7 +33,7 @@ QS_ROOT      = Path.home() / "Library/Mobile Documents/com~apple~CloudDocs" / "Q
 FEATURES = [
     "confidence_score",
     "RSI14","ADX14",
-    "EMA5_slope","EMA20_slope","EMA44_slope","EMA340_slope",
+    "EMA5_slope","EMA20_slope","EMA44_slope","EMA260_slope",
     "Donchian_position","Volatility_ATR","Trend_alignment",
 ]
 

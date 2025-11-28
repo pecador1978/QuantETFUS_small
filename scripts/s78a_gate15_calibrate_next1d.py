@@ -20,33 +20,12 @@ What this does
 4) Writes enriched outputs:
       P.ROOT / signals / analytics / gate15_stats.parquet
       P.ROOT / signals / analytics / gate15_stats.csv (latest + timestamped)
-
-Inputs
-------
-- Default operator file: latest in P.ROOT / signals / operator_today_RULE_all_*.csv
-  (override via --operator-csv)
-- Stretch stats: P.ROOT / signals / prob_models / stretch_stats.parquet
-
-Selected output columns
------------------------
-- ticker, decision, side, strength_score, strength20_pct, strength44_pct
-- rsi14_d (if present), adx14_d (if present), donchian_width_pct (if present)
-- stretch_p50_vs_ema20, stretch_p80_vs_ema20, stretch_p50_vs_ema44, stretch_p80_vs_ema44
-- median_bars_until_touch_ema20, median_bars_until_touch_ema44
-- p_drop_next1d/3d/5d (priors), p_up_next1d/3d/5d, p_down_next1d/3d/5d, p_ci_low_1d, p_ci_high_1d
-- stretch_regime
-- confidence_score_0_100, confidence_bucket
-
-Usage
------
-  python scripts/s78_gate15_stats.py
-  python scripts/s78_gate15_stats.py --operator-csv /path/to/operator_today_RULE_all_YYYYMMDD_HHMM.csv
 """
 
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime
-import argparse, sys
+import argparse, sys, math
 import numpy as np
 import pandas as pd
 
@@ -57,13 +36,11 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 from common.paths import P  # expects ROOT, SIGNALS, etc.
 
-
 # ---------- I/O helpers ----------
 def _latest_operator_csv() -> Path | None:
-    sigdir = P.ROOT / "signals"
+    sigdir = P.SIGNALS_DIR
     pats = sorted(sigdir.glob("operator_today_RULE_all_*.csv"))
     return pats[-1] if pats else None
-
 
 def _read_operator(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
@@ -74,9 +51,8 @@ def _read_operator(path: Path) -> pd.DataFrame:
             raise ValueError(f"{path.name}: missing required column '{n}' (check s77 output).")
     return df
 
-
 def _read_stretch_stats() -> pd.DataFrame | None:
-    p = P.ROOT / "signals" / "prob_models" / "stretch_stats.parquet"
+    p = P.SIGNALS_DIR / "prob_models" / "stretch_stats.parquet"
     if not p.exists():
         print(f"[WARN] stretch stats not found: {p}")
         return None
@@ -92,13 +68,12 @@ def _read_stretch_stats() -> pd.DataFrame | None:
     for k in keep:
         if k not in df.columns:
             df[k] = np.nan
+    # if multiple stages, keep the most recent per ticker
     df = df.sort_values(["ticker", "stage"]).drop_duplicates(subset=["ticker"], keep="last")
     return df[keep]
 
-
 # ---------- scoring helpers ----------
 def _stretch_component(str20: float, p50: float, p80: float) -> float:
-    """100 if strength20 < p50; 50 if p50≤strength20<p80; 0 if ≥p80; neutral 50 if missing."""
     if not np.isfinite(str20) or not np.isfinite(p50) or not np.isfinite(p80):
         return 50.0
     if str20 < p50:
@@ -107,24 +82,13 @@ def _stretch_component(str20: float, p50: float, p80: float) -> float:
         return 50.0
     return 0.0
 
-
 def _adx_component(adx: float) -> float:
-    """Linear 0..100 between ADX 10..40; clip; neutral 50 if missing."""
     if not np.isfinite(adx):
         return 50.0
-    val = (adx - 10.0) / (40.0 - 10.0) * 100.0
+    val = (adx - 10.0) / 30.0 * 100.0
     return float(np.clip(val, 0.0, 100.0))
 
-
 def _rsi_component(rsi: float) -> float:
-    """
-    RSI sweet spot 55–65 → 100
-    65–70 → 60
-    50–55 → 70
-    >70 → 20
-    <50 → 40
-    neutral 60 if missing
-    """
     if not np.isfinite(rsi):
         return 60.0
     if 55.0 <= rsi <= 65.0:
@@ -137,21 +101,13 @@ def _rsi_component(rsi: float) -> float:
         return 20.0
     return 40.0
 
-
 def _donchian_component(width_pct: float) -> float:
-    """Linear 0..100 between width 2%..4%; neutral 50 if missing."""
     if not np.isfinite(width_pct):
         return 50.0
-    val = (width_pct - 2.0) / (4.0 - 2.0) * 100.0
+    val = (width_pct - 2.0) / 2.0 * 100.0
     return float(np.clip(val, 0.0, 100.0))
 
-
 def _wilson_ci(p_hat: float, n: float, z: float = 1.96) -> tuple[float, float]:
-    """
-    Wilson score interval for a binomial proportion.
-    Returns (lo, hi). If n<=0 or p_hat is nan, returns (nan, nan).
-    """
-    import math
     if not (np.isfinite(p_hat) and np.isfinite(n)) or n <= 0:
         return (float("nan"), float("nan"))
     denom = 1.0 + (z*z)/n
@@ -159,58 +115,47 @@ def _wilson_ci(p_hat: float, n: float, z: float = 1.96) -> tuple[float, float]:
     spread = z * math.sqrt((p_hat*(1.0-p_hat)/n) + (z*z)/(4.0*n*n)) / denom
     return (center - spread, center + spread)
 
-
 def _compute_confidence(df: pd.DataFrame) -> pd.DataFrame:
     str20 = df.get("strength20_pct")
     p50   = df.get("stretch_p50_vs_ema20")
     p80   = df.get("stretch_p80_vs_ema20")
-    adx   = df.get("adx14_d") if "adx14_d" in df.columns else pd.Series([np.nan]*len(df))
-    rsi   = df.get("rsi14_d") if "rsi14_d" in df.columns else pd.Series([np.nan]*len(df))
-    dchw  = df.get("donchian_width_pct") if "donchian_width_pct" in df.columns else pd.Series([np.nan]*len(df))
+    adx   = df["adx14_d"] if "adx14_d" in df.columns else pd.Series(np.nan, index=df.index)
+    rsi   = df["rsi14_d"] if "rsi14_d" in df.columns else pd.Series(np.nan, index=df.index)
+    dchw  = df["donchian_width_pct"] if "donchian_width_pct" in df.columns else pd.Series(np.nan, index=df.index)
 
-    stretch_comp  = [ _stretch_component(a, b, c) for a,b,c in zip(str20, p50, p80) ]
-    adx_comp      = [ _adx_component(x) for x in adx ]
-    rsi_comp      = [ _rsi_component(x) for x in rsi ]
-    donchian_comp = [ _donchian_component(x) for x in dchw ]
+    stretch_comp  = [_stretch_component(a, b, c) for a, b, c in zip(str20, p50, p80)]
+    adx_comp      = [_adx_component(x) for x in adx]
+    rsi_comp      = [_rsi_component(x) for x in rsi]
+    donchian_comp = [_donchian_component(x) for x in dchw]
 
-    df = df.copy()
-    df["conf_stretch"]  = stretch_comp
-    df["conf_adx"]      = adx_comp
-    df["conf_rsi"]      = rsi_comp
-    df["conf_donchian"] = donchian_comp
+    out = df.copy()
+    out["conf_stretch"]  = stretch_comp
+    out["conf_adx"]      = adx_comp
+    out["conf_rsi"]      = rsi_comp
+    out["conf_donchian"] = donchian_comp
 
-    df["confidence_score_0_100"] = (
-        0.40 * df["conf_stretch"] +
-        0.30 * df["conf_adx"] +
-        0.20 * df["conf_rsi"] +
-        0.10 * df["conf_donchian"]
+    out["confidence_score_0_100"] = (
+        0.40 * out["conf_stretch"] +
+        0.30 * out["conf_adx"] +
+        0.20 * out["conf_rsi"] +
+        0.10 * out["conf_donchian"]
     ).round(1)
 
     def _bucket(x: float) -> str:
         if not np.isfinite(x):
             return "MED"
-        if x >= 70.0:
-            return "HIGH"
-        if x >= 50.0:
-            return "MED"
+        if x >= 70.0: return "HIGH"
+        if x >= 50.0: return "MED"
         return "LOW"
 
-    df["confidence_bucket"] = df["confidence_score_0_100"].apply(_bucket)
-    return df
-
+    out["confidence_bucket"] = out["confidence_score_0_100"].apply(_bucket)
+    return out
 
 def _attach_stretch_regime(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    stretch_regime based on today's strength20 vs per-ETF p50/p80 benchmarks:
-      - below_p50   : strength20 <  p50
-      - p50_to_p80  : p50 <= strength20 < p80
-      - above_p80   : strength20 >= p80
-      - unknown     : if any inputs missing
-    """
-    df = df.copy()
-    s = df.get("strength20_pct")
-    p50 = df.get("stretch_p50_vs_ema20")
-    p80 = df.get("stretch_p80_vs_ema20")
+    out = df.copy()
+    s   = out.get("strength20_pct")
+    p50 = out.get("stretch_p50_vs_ema20")
+    p80 = out.get("stretch_p80_vs_ema20")
     regime = []
     for a, b, c in zip(s, p50, p80):
         if not (np.isfinite(a) and np.isfinite(b) and np.isfinite(c)):
@@ -221,9 +166,8 @@ def _attach_stretch_regime(df: pd.DataFrame) -> pd.DataFrame:
             regime.append("p50_to_p80")
         else:
             regime.append("above_p80")
-    df["stretch_regime"] = regime
-    return df
-
+    out["stretch_regime"] = regime
+    return out
 
 # ---------- main ----------
 def main():
@@ -244,11 +188,25 @@ def main():
 
     op = _read_operator(op_path)
 
-    # focus on longs only (BUY/LONG); keep others but they get NaNs for new fields
-    longs = op[(op["decision"] == "BUY") & (op["side"].str.upper() == "LONG")].copy()
-    others = op[~((op["decision"] == "BUY") & (op["side"].str.upper() == "LONG"))].copy()
+    # --- normalize decision & side (robust) ---
+    if "decision" not in op.columns:
+        op["decision"] = ""
+    op["decision"] = op["decision"].astype("string").str.upper().fillna("")
 
-    # join stretch stats
+    if "side" not in op.columns:
+        op["side"] = np.where(op["decision"].eq("BUY"), "LONG",
+                              np.where(op["decision"].eq("SELL"), "SHORT", ""))
+    else:
+        op["side"] = op["side"].astype("string").str.upper().fillna("")
+        if (op["side"] == "").all():
+            op["side"] = np.where(op["decision"].eq("BUY"), "LONG",
+                                  np.where(op["decision"].eq("SELL"), "SHORT", ""))
+
+    # --- split rows ---
+    longs  = op[op["decision"].eq("BUY")  & op["side"].eq("LONG")].copy()
+    others = op[~(op["decision"].eq("BUY") & op["side"].eq("LONG"))].copy()
+
+    # --- join stretch stats on longs ---
     stretch = _read_stretch_stats()
     stretch_cols = [
         "n_events",
@@ -264,19 +222,21 @@ def main():
     else:
         longs = longs.merge(stretch, on="ticker", how="left")
 
-    # per-ticker 1D up/down & Wilson CI (from priors)
+    # --- per-ticker up/down & Wilson CI (from priors) ---
     if "p_drop_next1d" in longs.columns:
-        longs["p_down_next1d"] = longs["p_drop_next1d"].astype(float)
+        longs["p_down_next1d"] = pd.to_numeric(longs["p_drop_next1d"], errors="coerce")
         longs["p_up_next1d"]   = 1.0 - longs["p_down_next1d"]
     else:
         longs["p_down_next1d"] = np.nan
         longs["p_up_next1d"]   = np.nan
-    # Wilson CI around p_up_next1d using n_events
+
     def _row_ci(row):
         p_hat = row.get("p_up_next1d", np.nan)
         n     = row.get("n_events",   np.nan)
-        lo, hi = _wilson_ci(p_hat, n)
+        lo, hi = _wilson_ci(float(p_hat) if np.isfinite(p_hat) else np.nan,
+                            float(n) if np.isfinite(n) else np.nan)
         return pd.Series({"p_ci_low_1d": lo, "p_ci_high_1d": hi})
+
     if "n_events" in longs.columns:
         ci = longs.apply(_row_ci, axis=1)
         longs["p_ci_low_1d"]  = ci["p_ci_low_1d"]
@@ -285,75 +245,78 @@ def main():
         longs["p_ci_low_1d"]  = np.nan
         longs["p_ci_high_1d"] = np.nan
 
-    # also derive 3d/5d up/down from priors (no CI to keep columns light)
     for h in (3, 5):
         dcol = f"p_drop_next{h}d"
         up   = f"p_up_next{h}d"
         dn   = f"p_down_next{h}d"
         if dcol in longs.columns:
-            longs[dn] = longs[dcol].astype(float)
+            longs[dn] = pd.to_numeric(longs[dcol], errors="coerce")
             longs[up] = 1.0 - longs[dn]
         else:
             longs[dn] = np.nan
             longs[up] = np.nan
 
-    # compute stretch_regime and confidence for longs
+    # --- stretch regime + confidence ---
     longs = _attach_stretch_regime(longs)
     longs = _compute_confidence(longs)
 
-    # non-longs: fill neutral NaNs for new fields
-    if len(others):
+    # --- non-longs: neutral NaNs for all new fields ---
+    if not others.empty:
         for c in stretch_cols + [
             "p_up_next1d","p_down_next1d","p_ci_low_1d","p_ci_high_1d",
             "p_up_next3d","p_down_next3d","p_up_next5d","p_down_next5d",
             "conf_stretch","conf_adx","conf_rsi","conf_donchian",
-            "confidence_score_0_100","confidence_bucket","stretch_regime"
+            "confidence_score_0_100","confidence_bucket","stretch_regime",
         ]:
-            others[c] = np.nan
+            others.loc[:, c] = np.nan
 
-    # combine back
+    # --- combine back ---
     out = pd.concat([longs, others], ignore_index=True)
 
-    # sort: BUYs first by confidence, then others by strength_score
+    # --- sort: BUYs first by confidence, then others by strength_score ---
     out["__order"] = np.where(out["decision"] == "BUY", 0, 1)
-    out = out.sort_values(
-        ["__order", "confidence_score_0_100", "strength_score"],
-        ascending=[True, False, False]
-    ).drop(columns="__order")
+    sort_cols = ["__order"]
+    asc = [True]
+    if "confidence_score_0_100" in out.columns:
+        sort_cols.append("confidence_score_0_100"); asc.append(False)
+    if "strength_score" in out.columns:
+        sort_cols.append("strength_score"); asc.append(False)
+    out = out.sort_values(sort_cols, ascending=asc).drop(columns="__order")
 
-    # 1) Convert probabilities (0.43 -> 43%)
+    # --- presentation formatting ---
     prob_cols = [
         "p_up_next1d","p_down_next1d",
         "p_up_next3d","p_down_next3d",
         "p_up_next5d","p_down_next5d",
         "p_drop_next1d","p_drop_next3d","p_drop_next5d",
-        "p_ci_low_1d","p_ci_high_1d"
+        "p_ci_low_1d","p_ci_high_1d",
     ]
     for c in prob_cols:
         if c in out.columns:
-            out[c] = (out[c] * 100).round(0).astype("Int64")
+            out[c] = pd.to_numeric(out[c], errors="coerce")
+            out[c] = (out[c] * 100.0)
 
-    # 2) Convert returns (0.035 -> 3.5%) and format to 1 decimal
-    ret_cols = ["ret_p25_next5d","ret_p75_next5d"]
-    for c in ret_cols:
+    # returns in %
+    for c in ["ret_p25_next5d","ret_p75_next5d"]:
         if c in out.columns:
-            out[c] = (out[c] * 100).round(1)
+            out[c] = pd.to_numeric(out[c], errors="coerce") * 100.0
 
-    # 3) Format all other numeric columns to 1 decimal
+    # round numeric columns (keep NaNs)
     num_cols = out.select_dtypes(include="number").columns
     for c in num_cols:
-        if c not in prob_cols and c not in ret_cols:
+        if c in {"ret_p25_next5d","ret_p75_next5d"}:
             out[c] = out[c].round(1)
+        else:
+            out[c] = out[c].round(0)
 
-
-    # outputs
-    out_dir = P.ROOT / "signals" / "analytics"
+    # ---------- outputs ----------
+    out_dir = P.SIGNALS_DIR / "analytics"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     ts = datetime.utcnow().strftime("%Y%m%d_%H%M")
     pq_path = out_dir / "gate15_stats.parquet"
-    csv_path_ts = out_dir / f"gate15_stats_{ts}.csv"  # timestamped
-    csv_path_latest = out_dir / "gate15_stats.csv"    # latest
+    csv_path_ts = out_dir / f"gate15_stats_{ts}.csv"
+    csv_path_latest = out_dir / "gate15_stats.csv"
 
     out.to_parquet(pq_path, index=False)
     out.to_csv(csv_path_ts, index=False)
@@ -366,7 +329,6 @@ def main():
         print("[WARN] Stretch benchmarks missing — confidence & stretch_regime computed with neutral stretch inputs.")
     else:
         print("[OK] Stretch benchmarks joined; per-ticker up/down & CI computed; confidence & stretch_regime set.")
-
 
 if __name__ == "__main__":
     main()
